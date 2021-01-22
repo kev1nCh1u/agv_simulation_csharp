@@ -19,13 +19,13 @@ namespace agv_simulation
 
         PointF[] genLine()
         {
-            int num = 400;
+            int num = 450;
             PointF[] points = new PointF[num];
             for (int i = 0; i < num; i++)
             {
 
                 points[i].X = (float)pictureBox1.Width / 2;
-                points[i].Y = (float)i + 50;
+                points[i].Y = (float) 500 - i;
 
             }
             return points;
@@ -57,11 +57,11 @@ namespace agv_simulation
             double errCalc;
             double err = 999999;
             PointF point = new PointF(0, 0);
-            for (int i = 0; i < compare.Length; i++)
+            for (int i = compare.Length - 1; i >= 0; i--)
             {
                 errCalc = Math.Pow(Math.Pow(basic.X - compare[i].X, 2) + Math.Pow(basic.Y - compare[i].Y, 2), 0.5);
-                Console.WriteLine("test " + errCalc);
-                if (errCalc < err && errCalc > 100)
+                // Console.WriteLine("test " + i); //debug
+                if (errCalc < err && errCalc > 200)
                 {
                     err = errCalc;
                     point = compare[i];
