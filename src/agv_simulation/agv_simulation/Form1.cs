@@ -13,7 +13,7 @@ namespace agv_simulation
     public partial class Form1 : Form
     {
 
-        PointF carPoint, closestPoint;
+        PointF carPoint, closePoint;
         PointF[] navPath;
 
 
@@ -48,20 +48,20 @@ namespace agv_simulation
 
             g.DrawCurve(penColorRed, navPath);
             g.FillEllipse(brushColorBlack, carPoint.X - 5, carPoint.Y - 5, 10, 10);
-            g.FillEllipse(brushColorOrange, closestPoint.X - 5, closestPoint.Y - 5, 10, 10);
+            g.FillEllipse(brushColorOrange, closePoint.X - 5, closePoint.Y - 5, 10, 10);
 
         }
 
-        PointF findClosestPoint(PointF basic, PointF[] compare)
+        PointF findClosePoint(PointF basic, PointF[] compare)
         {
-            float errCalc;
-            float err = 999999;
-            PointF point = new PointF(0,0);
-            for(int i = 0; i < compare.Length; i++)
+            double errCalc;
+            double err = 999999;
+            PointF point = new PointF(0, 0);
+            for (int i = 0; i < compare.Length; i++)
             {
-                errCalc = Math.Abs(basic.X  - compare[i].X) + Math.Abs(basic.Y  - compare[i].Y);
-                Console.WriteLine("test " + err + " " + errCalc + " " + compare[i].X + " " + compare[i].Y);
-                if(errCalc < err)
+                errCalc = Math.Pow(Math.Pow(basic.X - compare[i].X, 2) + Math.Pow(basic.Y - compare[i].Y, 2), 0.5);
+                Console.WriteLine("test " + errCalc);
+                if (errCalc < err && errCalc > 100)
                 {
                     err = errCalc;
                     point = compare[i];
@@ -81,7 +81,7 @@ namespace agv_simulation
 
             navPath = genLine();
             carPoint = new PointF(pictureBox1.Width / 2 - 100, pictureBox1.Height - 100);
-            closestPoint = findClosestPoint(carPoint, navPath);
+            closePoint = findClosePoint(carPoint, navPath);
 
             drawOnPic();
         }
