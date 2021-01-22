@@ -30,7 +30,7 @@ namespace agv_simulation
         void drawOnPic(PointF[] points)
         {
             //Console.WriteLine($">> {DateTime.Now.ToString()}");
-            pictureBox1.Invalidate();
+            // pictureBox1.Invalidate();
 
             Bitmap bmp = new Bitmap(pictureBox1.Width, pictureBox1.Height);
             pictureBox1.Image = bmp;
@@ -48,11 +48,19 @@ namespace agv_simulation
         public Form1()
         {
             InitializeComponent();
-            genLine();
+            // genLine();
         }
 
+        private void timer1_Tick(object sender, EventArgs e)
+        {
+            // Console.WriteLine("timer1 tick");
+            // pictureBox1.Invalidate();
+        }
 
-
-
+        private void pictureBox1_Paint(object sender, PaintEventArgs e)
+        {
+            // Console.WriteLine("pictureBox1_Paint");
+            genLine();
+        }
     }
 }
