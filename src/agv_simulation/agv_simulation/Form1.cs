@@ -15,13 +15,13 @@ namespace agv_simulation
 
         void genLine()
         {
-            int num = 300;
+            int num = 400;
             PointF[] points = new PointF[num];
             for (int i = 0; i < num; i++)
             {
 
-                points[i].X = (float)pictureBox1.Width/2;
-                points[i].Y = (float)i + 100;
+                points[i].X = (float)pictureBox1.Width / 2;
+                points[i].Y = (float)i + 50;
 
             }
             drawOnPic(points);
@@ -42,6 +42,7 @@ namespace agv_simulation
             Brush brushColor = new SolidBrush(Color.Black);
 
             g.DrawCurve(penColor, points);
+            g.FillEllipse(brushColor, pictureBox1.Width / 2 - 100, pictureBox1.Height - 100, 10, 10);
 
         }
 
