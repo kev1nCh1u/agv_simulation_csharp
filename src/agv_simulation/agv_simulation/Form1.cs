@@ -34,7 +34,7 @@ namespace agv_simulation
         void drawOnPic()
         {
             //Console.WriteLine($">> {DateTime.Now.ToString()}");
-            // pictureBox1.Invalidate();
+            pictureBox1.Invalidate();
 
             Bitmap bmp = new Bitmap(pictureBox1.Width, pictureBox1.Height);
             pictureBox1.Image = bmp;
@@ -52,6 +52,12 @@ namespace agv_simulation
 
         }
 
+        double pythagorean(float x, float y)
+        {
+            double ans = Math.Pow(Math.Pow(x, 2) + Math.Pow(y, 2), 0.5);
+            return ans;
+        }
+
         PointF findClosePoint(PointF basic, PointF[] compare)
         {
             double errCalc;
@@ -59,9 +65,10 @@ namespace agv_simulation
             PointF point = new PointF(0, 0);
             for (int i = compare.Length - 1; i >= 0; i--)
             {
-                errCalc = Math.Pow(Math.Pow(basic.X - compare[i].X, 2) + Math.Pow(basic.Y - compare[i].Y, 2), 0.5);
+                // errCalc = Math.Pow(Math.Pow(basic.X - compare[i].X, 2) + Math.Pow(basic.Y - compare[i].Y, 2), 0.5);
+                errCalc = pythagorean(basic.X - compare[i].X, basic.Y - compare[i].Y);
                 // Console.WriteLine("test " + i); //debug
-                if (errCalc < err && errCalc > 100)
+                if (errCalc < err && errCalc > 150)
                 {
                     err = errCalc;
                     point = compare[i];
@@ -81,22 +88,14 @@ namespace agv_simulation
 
             navPath = genLine(new PointF(pictureBox1.Height / 2, 500), new PointF(pictureBox1.Height / 2, 50));
             carPoint = new PointF(pictureBox1.Width / 2 - 100, pictureBox1.Height - 100);
-            closePoint = findClosePoint(carPoint, navPath);
-
-            drawOnPic();
         }
 
         private void timer1_Tick(object sender, EventArgs e)
         {
             // Console.WriteLine("timer1 tick");
-            pictureBox1.Invalidate();
-
-        }
-
-        private void pictureBox1_Paint(object sender, PaintEventArgs e)
-        {
-            // Console.WriteLine("pictureBox1_Paint");
+            closePoint = findClosePoint(carPoint, navPath);
             drawOnPic();
+
         }
     }
 }
