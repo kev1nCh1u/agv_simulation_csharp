@@ -14,6 +14,7 @@ namespace agv_simulation
     {
 
         PointF carPoint, closePoint;
+        double carHead;
         PointF[] navPath;
 
 
@@ -43,10 +44,12 @@ namespace agv_simulation
             //Graphics g = pictureBox1.CreateGraphics();
 
             Pen penColorRed = new Pen(Color.Red, 4);
+            Pen penColorBlack = new Pen(Color.Black, 2);
             Brush brushColorBlack = new SolidBrush(Color.Black);
             Brush brushColorOrange = new SolidBrush(Color.Orange);
 
             g.DrawCurve(penColorRed, navPath);
+            g.DrawLine(penColorBlack, carPoint.X, carPoint.Y, carPoint.X + 10 * (float)Math.Cos(carHead), carPoint.Y - 10 * (float)Math.Sin(carHead));
             g.FillEllipse(brushColorBlack, carPoint.X - 5, carPoint.Y - 5, 10, 10);
             g.FillEllipse(brushColorOrange, closePoint.X - 5, closePoint.Y - 5, 10, 10);
 
@@ -79,11 +82,21 @@ namespace agv_simulation
 
         void purePursuit()
         {
-            double x, y, pureSita;
-            x = closePoint.X - carPoint.X;
-            y = -(closePoint.Y - carPoint.Y);
-            pureSita = Math.Atan2(y, x);
-            Console.WriteLine(x + "\t" + y + "\t" + pureSita);
+            double errX, errY;
+            double errDis, errDisLast = 0, errDisSum = 0;
+            double errSita, errSitaLast = 0, errSitaSum  = 0;
+            double carV, carW;
+            double kp = 1, ki = 0, kd = 0;
+            errX = closePoint.X - carPoint.X;
+            errY = -(closePoint.Y - carPoint.Y);
+            errDis = pythagorean((float)errX, (float)errY);
+            errSita = Math.Atan2(errY, errX);
+            // Console.WriteLine(x + "  " + y + "  " + pureSita);
+
+            // motorLvalue = motorSpeed - (sensorError * motorSpeed * kp  + sensorErrorSum * ki + (sensorError - sensorErrorLast) * kd);
+
+            carV = kp * errDis + ki * errDisSum + kd * (errDis - errDisLast);
+
         }
 
         public Form1()
@@ -92,6 +105,7 @@ namespace agv_simulation
 
             navPath = genLine(new PointF(pictureBox1.Height / 2, 500), new PointF(pictureBox1.Height / 2, 50));
             carPoint = new PointF(pictureBox1.Width / 2 - 100, pictureBox1.Height - 100);
+            carHead = 1.57;
         }
 
         private void timer1_Tick(object sender, EventArgs e)
