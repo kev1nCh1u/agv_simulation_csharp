@@ -17,7 +17,7 @@ namespace agv_simulation
         PointF[] navPath;
 
 
-        PointF[] genLine()
+        PointF[] genLine(PointF startPoint, PointF endPoint)
         {
             int num = 450;
             PointF[] points = new PointF[num];
@@ -25,7 +25,7 @@ namespace agv_simulation
             {
 
                 points[i].X = (float)pictureBox1.Width / 2;
-                points[i].Y = (float) 500 - i;
+                points[i].Y = (float)500 - i;
 
             }
             return points;
@@ -61,7 +61,7 @@ namespace agv_simulation
             {
                 errCalc = Math.Pow(Math.Pow(basic.X - compare[i].X, 2) + Math.Pow(basic.Y - compare[i].Y, 2), 0.5);
                 // Console.WriteLine("test " + i); //debug
-                if (errCalc < err && errCalc > 200)
+                if (errCalc < err && errCalc > 100)
                 {
                     err = errCalc;
                     point = compare[i];
@@ -79,7 +79,7 @@ namespace agv_simulation
         {
             InitializeComponent();
 
-            navPath = genLine();
+            navPath = genLine(new PointF(pictureBox1.Height / 2, 500), new PointF(pictureBox1.Height / 2, 50));
             carPoint = new PointF(pictureBox1.Width / 2 - 100, pictureBox1.Height - 100);
             closePoint = findClosePoint(carPoint, navPath);
 
