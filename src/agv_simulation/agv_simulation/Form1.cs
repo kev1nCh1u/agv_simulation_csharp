@@ -79,7 +79,11 @@ namespace agv_simulation
 
         void purePursuit()
         {
-
+            double x, y, pureSita;
+            x = closePoint.X - carPoint.X;
+            y = -(closePoint.Y - carPoint.Y);
+            pureSita = Math.Atan2(y, x);
+            Console.WriteLine(x + "\t" + y + "\t" + pureSita);
         }
 
         public Form1()
@@ -95,7 +99,7 @@ namespace agv_simulation
             // Console.WriteLine("timer1 tick");
             closePoint = findClosePoint(carPoint, navPath);
             drawOnPic();
-
+            purePursuit();
         }
     }
 }
