@@ -14,8 +14,15 @@ namespace agv_simulation
     {
 
         PointF carPoint, closePoint;
+        int closestPoint;
         double carHead;
         PointF[] navPath;
+
+        double kp = 0.1, ki = 0, kd = 0;
+        double errX = 0, errY = 0;
+        double errDis = 0, errDisLast = 0, errDisSum = 0;
+        double errSita = 0, errSitaLast = 0, errSitaSum = 0;
+        double carV = 0, carW = 0;
 
 
         PointF[] genLine(PointF startPoint, PointF endPoint)
@@ -61,17 +68,18 @@ namespace agv_simulation
             return ans;
         }
 
-        PointF findClosePoint(PointF basic, PointF[] compare)
+        PointF findClosePoint(PointF basic, PointF[] compare ,int i)
         {
             double errCalc;
             double err = 999999;
-            PointF point = new PointF(0, 0);
-            for (int i = compare.Length - 1; i >= 0; i--)
+            PointF point = compare[compare.Length - 1];
+            Console.WriteLine("test " + i); //debug
+            for (; i < compare.Length; i++)
             {
                 // errCalc = Math.Pow(Math.Pow(basic.X - compare[i].X, 2) + Math.Pow(basic.Y - compare[i].Y, 2), 0.5);
                 errCalc = pythagorean(basic.X - compare[i].X, basic.Y - compare[i].Y);
                 // Console.WriteLine("test " + i); //debug
-                if (errCalc < err && errCalc > 150)
+                if (errCalc < err && errCalc > 40)
                 {
                     err = errCalc;
                     point = compare[i];
@@ -80,22 +88,51 @@ namespace agv_simulation
             return point;
         }
 
+        int findClosestPoint(PointF basic, PointF[] compare)
+        {
+            double errCalc;
+            double err = 999999;
+            PointF point = new PointF(0, 0);
+            int place = 0;
+            for (int i = 0; i < compare.Length; i++)
+            {
+                // errCalc = Math.Pow(Math.Pow(basic.X - compare[i].X, 2) + Math.Pow(basic.Y - compare[i].Y, 2), 0.5);
+                errCalc = pythagorean(basic.X - compare[i].X, basic.Y - compare[i].Y);
+                // Console.WriteLine("test " + i); //debug
+                if (errCalc < err)
+                {
+                    err = errCalc;
+                    point = compare[i];
+                    place = i;
+                }
+            }
+            // Console.WriteLine(i); //debug
+            return place;
+        }
+
         void purePursuit()
         {
-            double errX, errY;
-            double errDis, errDisLast = 0, errDisSum = 0;
-            double errSita, errSitaLast = 0, errSitaSum  = 0;
-            double carV, carW;
-            double kp = 1, ki = 0, kd = 0;
+
+
             errX = closePoint.X - carPoint.X;
             errY = -(closePoint.Y - carPoint.Y);
             errDis = pythagorean((float)errX, (float)errY);
-            errSita = Math.Atan2(errY, errX);
-            // Console.WriteLine(x + "  " + y + "  " + pureSita);
-
-            // motorLvalue = motorSpeed - (sensorError * motorSpeed * kp  + sensorErrorSum * ki + (sensorError - sensorErrorLast) * kd);
+            errSita = carHead - Math.Atan2(errY, errX);
+            Console.WriteLine(errX + "  " + errY + "  " + errSita);
 
             carV = kp * errDis + ki * errDisSum + kd * (errDis - errDisLast);
+            carW = (kp+1) * errSita + ki * errSitaSum + kd * (errSita - errSitaLast);
+            // Console.WriteLine(carV + "  " + carW);
+
+            errDisLast = errDis;
+            errDisSum += errDis;
+            errSitaLast = errSita;
+            errSitaSum += errSita;
+
+            carPoint.X += (float)(10 * Math.Cos(carHead));
+            carPoint.Y -= (float)(10 * Math.Sin(carHead));
+
+            carHead -= carW;
 
         }
 
@@ -111,7 +148,8 @@ namespace agv_simulation
         private void timer1_Tick(object sender, EventArgs e)
         {
             // Console.WriteLine("timer1 tick");
-            closePoint = findClosePoint(carPoint, navPath);
+            closestPoint = findClosestPoint(carPoint, navPath);
+            closePoint = findClosePoint(carPoint, navPath, closestPoint);
             drawOnPic();
             purePursuit();
         }
