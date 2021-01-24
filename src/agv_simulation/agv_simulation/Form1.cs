@@ -18,10 +18,18 @@ namespace agv_simulation
         int closestPoint, frontPoint;
         PointF[] navPath;
 
-        double kp = 0.1, ki = 0, kd = 0;
+        public struct ErrType
+        {
+            public double kp, ki, kd;
+            public double err, errlast, errsum;
+        }
+
         double errX = 0, errY = 0;
-        double errDis = 0, errDisLast = 0, errDisSum = 0;
-        double errSita = 0, errSitaLast = 0, errSitaSum = 0;
+        // double kp = 0.1, ki = 0, kd = 0;
+        // double errDis = 0, errDisLast = 0, errDisSum = 0;
+        // double errSita = 0, errSitaLast = 0, errSitaSum = 0;
+
+        ErrType errDistance, errSita;
         double carV = 0, carW = 0;
 
 
@@ -74,7 +82,7 @@ namespace agv_simulation
             double err = 999999;
             PointF point = compare[compare.Length - 1];
             int place = compare.Length - 1;
-            Console.WriteLine("test " + i); //debug
+            // Console.WriteLine("i:" + i); //debug
             for (; i < compare.Length; i++)
             {
                 // errCalc = Math.Pow(Math.Pow(basic.X - compare[i].X, 2) + Math.Pow(basic.Y - compare[i].Y, 2), 0.5);
@@ -118,21 +126,21 @@ namespace agv_simulation
 
             errX = navPath[frontPoint].X - carPoint.X;
             errY = -(navPath[frontPoint].Y - carPoint.Y);
-            errDis = Pythagorean((float)errX, (float)errY);
-            errSita = carHead - Math.Atan2(errY, errX);
-            Console.WriteLine(errX + "  " + errY + "  " + errSita);
+            errDistance.err = Pythagorean((float)errX, (float)errY);
+            errSita.err = carHead - Math.Atan2(errY, errX);
+            Console.WriteLine(errX + "  " + errY + "  " + errDistance.err + "  " + errSita.err);
 
-            carV = kp * errDis + ki * errDisSum + kd * (errDis - errDisLast);
-            carW = (kp+1) * errSita + ki * errSitaSum + kd * (errSita - errSitaLast);
+            carV = errDistance.kp * errDistance.err + errDistance.ki * errDistance.errsum + errDistance.kd * (errDistance.err - errDistance.errlast);
+            carW = errSita.kp * errSita.err + errSita.ki * errSita.errsum + errSita.kd * (errSita.err - errSita.errlast);
             // Console.WriteLine(carV + "  " + carW);
 
-            errDisLast = errDis;
-            errDisSum += errDis;
-            errSitaLast = errSita;
-            errSitaSum += errSita;
+            errDistance.errlast = errDistance.err;
+            errDistance.errsum += errDistance.err;
+            errSita.errlast = errSita.err;
+            errSita.errsum += errSita.err;
 
-            carPoint.X += (float)(10 * Math.Cos(carHead));
-            carPoint.Y -= (float)(10 * Math.Sin(carHead));
+            carPoint.X += (float)(carV * Math.Cos(carHead));
+            carPoint.Y -= (float)(carV * Math.Sin(carHead));
 
             carHead -= carW;
 
@@ -145,6 +153,12 @@ namespace agv_simulation
             navPath = GenLine(new PointF(pictureBox1.Height / 2, 500), new PointF(pictureBox1.Height / 2, 50));
             carPoint = new PointF(pictureBox1.Width / 2 - 100, pictureBox1.Height - 100);
             carHead = 1.57;
+            errDistance.kp = 0;
+            errDistance.ki = 0;
+            errDistance.kd = 0;
+            errSita.kp = 0;
+            errSita.ki = 0;
+            errSita.kd = 0;
         }
 
         private void timer1_Tick(object sender, EventArgs e)
