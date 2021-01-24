@@ -76,7 +76,7 @@ namespace agv_simulation
             return ans;
         }
 
-        int FindFrontPoint(PointF basic, PointF[] compare ,int i)
+        int FindFrontPoint(PointF basic, PointF[] compare ,int i, int front)
         {
             double errCalc;
             double err = 999999;
@@ -88,7 +88,7 @@ namespace agv_simulation
                 // errCalc = Math.Pow(Math.Pow(basic.X - compare[i].X, 2) + Math.Pow(basic.Y - compare[i].Y, 2), 0.5);
                 errCalc = Pythagorean(basic.X - compare[i].X, basic.Y - compare[i].Y);
                 // Console.WriteLine("test " + i); //debug
-                if (errCalc < err && errCalc > 40)
+                if (errCalc < err && errCalc > front)
                 {
                     err = errCalc;
                     point = compare[i];
@@ -128,11 +128,11 @@ namespace agv_simulation
             errY = -(navPath[frontPoint].Y - carPoint.Y);
             errDistance.err = Pythagorean((float)errX, (float)errY);
             errSita.err = carHead - Math.Atan2(errY, errX);
-            Console.WriteLine(errX + "  " + errY + "  " + errDistance.err + "  " + errSita.err);
+            // Console.WriteLine(errX + "  " + errY + "  " + errDistance.err + "  " + errSita.err); //debug
 
             carV = errDistance.kp * errDistance.err + errDistance.ki * errDistance.errsum + errDistance.kd * (errDistance.err - errDistance.errlast);
             carW = errSita.kp * errSita.err + errSita.ki * errSita.errsum + errSita.kd * (errSita.err - errSita.errlast);
-            // Console.WriteLine(carV + "  " + carW);
+            // Console.WriteLine(carV + "  " + carW); //debug
 
             errDistance.errlast = errDistance.err;
             errDistance.errsum += errDistance.err;
@@ -163,11 +163,17 @@ namespace agv_simulation
 
         private void timer1_Tick(object sender, EventArgs e)
         {
+            label10.Text = Convert.ToString(trackBar1.Value);
+
+
+
             // Console.WriteLine("timer1 tick");
             closestPoint = FindClosestPoint(carPoint, navPath);
-            frontPoint = FindFrontPoint(carPoint, navPath, closestPoint);
+            frontPoint = FindFrontPoint(carPoint, navPath, closestPoint, trackBar1.Value);
             DrawOnPic();
             PurePursuit();
+
+            
         }
     }
 }
