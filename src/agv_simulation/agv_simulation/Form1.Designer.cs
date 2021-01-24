@@ -373,10 +373,10 @@
             // trackBar2
             // 
             this.trackBar2.Location = new System.Drawing.Point(15, 94);
+            this.trackBar2.Maximum = 50;
             this.trackBar2.Name = "trackBar2";
             this.trackBar2.Size = new System.Drawing.Size(228, 45);
             this.trackBar2.TabIndex = 4;
-            this.trackBar2.TickFrequency = 10;
             // 
             // trackBar1
             // 

@@ -140,6 +140,9 @@ namespace agv_simulation
             carW = errSita.kp * errSita.err + errSita.ki * errSita.errsum + errSita.kd * (errSita.err - errSita.errlast);
             // Console.WriteLine(carV + "  " + carW); //debug
 
+            if(carV > 30)
+                carV = 30;
+
             errDistance.errlast = errDistance.err;
             errDistance.errsum += errDistance.err;
             errSita.errlast = errSita.err;
