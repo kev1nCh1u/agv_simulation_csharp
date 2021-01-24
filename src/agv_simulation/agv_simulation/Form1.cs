@@ -32,6 +32,12 @@ namespace agv_simulation
         ErrType errDistance, errSita;
         double carV = 0, carW = 0;
 
+        void ReStart()
+        {
+            navPath = GenLine(new PointF(pictureBox1.Height / 2, 500), new PointF(pictureBox1.Height / 2, 50));
+            carPoint = new PointF(pictureBox1.Width / 2 - 100, pictureBox1.Height - 100);
+            carHead = 1.57;
+        }
 
         PointF[] GenLine(PointF startPoint, PointF endPoint)
         {
@@ -76,7 +82,7 @@ namespace agv_simulation
             return ans;
         }
 
-        int FindFrontPoint(PointF basic, PointF[] compare ,int i, int front)
+        int FindFrontPoint(PointF basic, PointF[] compare, int i, int front)
         {
             double errCalc;
             double err = 999999;
@@ -120,7 +126,7 @@ namespace agv_simulation
             return place;
         }
 
-        void PurePursuit()
+        void PurePursuit(int basicSpeed)
         {
 
 
@@ -130,7 +136,7 @@ namespace agv_simulation
             errSita.err = carHead - Math.Atan2(errY, errX);
             // Console.WriteLine(errX + "  " + errY + "  " + errDistance.err + "  " + errSita.err); //debug
 
-            carV = errDistance.kp * errDistance.err + errDistance.ki * errDistance.errsum + errDistance.kd * (errDistance.err - errDistance.errlast);
+            carV = errDistance.kp * errDistance.err + errDistance.ki * errDistance.errsum + errDistance.kd * (errDistance.err - errDistance.errlast) + basicSpeed;
             carW = errSita.kp * errSita.err + errSita.ki * errSita.errsum + errSita.kd * (errSita.err - errSita.errlast);
             // Console.WriteLine(carV + "  " + carW); //debug
 
@@ -143,37 +149,53 @@ namespace agv_simulation
             carPoint.Y -= (float)(carV * Math.Sin(carHead));
 
             carHead -= carW;
-
         }
 
         public Form1()
         {
             InitializeComponent();
 
-            navPath = GenLine(new PointF(pictureBox1.Height / 2, 500), new PointF(pictureBox1.Height / 2, 50));
-            carPoint = new PointF(pictureBox1.Width / 2 - 100, pictureBox1.Height - 100);
-            carHead = 1.57;
-            errDistance.kp = 0;
-            errDistance.ki = 0;
-            errDistance.kd = 0;
-            errSita.kp = 0;
-            errSita.ki = 0;
-            errSita.kd = 0;
+            ReStart();
         }
 
         private void timer1_Tick(object sender, EventArgs e)
         {
-            label10.Text = Convert.ToString(trackBar1.Value);
+            int frontDis = trackBar1.Value;
+            int basicSpeed = trackBar2.Value;
+            double accuracy = trackBar3.Value / (float)100;
+            errDistance.kp = trackBar4.Value / (float)100;
+            errDistance.ki = trackBar5.Value / (float)100;
+            errDistance.kd = trackBar6.Value / (float)100;
+            errSita.kp = trackBar7.Value / (float)100;
+            errSita.ki = trackBar8.Value / (float)100;
+            errSita.kd = trackBar9.Value / (float)100;
 
-
+            label10.Text = Convert.ToString(frontDis);
+            label11.Text = Convert.ToString(basicSpeed);
+            label12.Text = Convert.ToString(accuracy);
+            label13.Text = Convert.ToString(errDistance.kp);
+            label14.Text = Convert.ToString(errDistance.ki);
+            label15.Text = Convert.ToString(errDistance.kd);
+            label16.Text = Convert.ToString(errSita.kp);
+            label17.Text = Convert.ToString(errSita.ki);
+            label18.Text = Convert.ToString(errSita.kd);
 
             // Console.WriteLine("timer1 tick");
             closestPoint = FindClosestPoint(carPoint, navPath);
-            frontPoint = FindFrontPoint(carPoint, navPath, closestPoint, trackBar1.Value);
-            DrawOnPic();
-            PurePursuit();
+            frontPoint = FindFrontPoint(carPoint, navPath, closestPoint, frontDis);
+            PurePursuit(basicSpeed);
 
-            
+            DrawOnPic();
+
+            if (errDistance.err < accuracy && errSita.err < accuracy)
+            {
+                ReStart();
+            }
+
+        }
+        private void button1_Click(object sender, EventArgs e)
+        {
+            ReStart();
         }
     }
 }
