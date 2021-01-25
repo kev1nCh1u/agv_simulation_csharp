@@ -97,18 +97,16 @@ namespace agv_simulation
             return ans;
         }
 
-        int FindFrontPoint(PointF basic, PointF[] compare, int i, int frontDis)
+        int FindFrontPoint(PointF basic, PointF[] compare, int closestPoint, int frontDis)
         {
             double errCalc;
             double err = 999999;
             PointF point = compare[compare.Length - 1];
             int place = compare.Length - 1;
             // Console.WriteLine("i:" + i); //debug
-            for (; i < compare.Length; i++)
+            for (int i = closestPoint; i < compare.Length; i++)
             {
-                // errCalc = Math.Pow(Math.Pow(basic.X - compare[i].X, 2) + Math.Pow(basic.Y - compare[i].Y, 2), 0.5);
                 errCalc = Pythagorean(basic.X - compare[i].X, basic.Y - compare[i].Y);
-                // Console.WriteLine("test " + i); //debug
                 if (errCalc < err && errCalc > frontDis && i >= frontPoint)
                 {
                     err = errCalc;
@@ -208,7 +206,7 @@ namespace agv_simulation
 
             // Console.WriteLine("timer1 tick");
             closestPoint = FindClosestPoint(carPoint, navPath);
-            frontPoint = FindFrontPoint(carPoint, navPath, closestPoint, frontDis);
+            frontPoint = FindFrontPoint(navPath[closestPoint], navPath, closestPoint, frontDis);
             PurePursuit(basicSpeed);
 
             DrawOnPic();
