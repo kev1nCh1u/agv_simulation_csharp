@@ -34,7 +34,7 @@ namespace agv_simulation
 
         void ReStart()
         {
-            navPath = GenLine(new PointF(pictureBox1.Height / 2, 500), new PointF(pictureBox1.Height / 2, 50));
+            navPath = GenS(new PointF(pictureBox1.Height / 2, 500), new PointF(pictureBox1.Height / 2, 50));
             carPoint = new PointF(pictureBox1.Width / 2 - 100, pictureBox1.Height - 100);
             carHead = 1.57;
             frontPoint = 0;
@@ -48,6 +48,20 @@ namespace agv_simulation
             {
 
                 points[i].X = (float)pictureBox1.Width / 2;
+                points[i].Y = (float)500 - i;
+
+            }
+            return points;
+        }
+
+        PointF[] GenS(PointF startPoint, PointF endPoint)
+        {
+            int num = 450;
+            PointF[] points = new PointF[num];
+            for (int i = 0; i < num; i++)
+            {
+
+                points[i].X = (float)pictureBox1.Width / 2 + (float)Math.Sin(i / (float)pictureBox1.Height * 2 * (Math.PI)) * 40;
                 points[i].Y = (float)500 - i;
 
             }
@@ -136,10 +150,10 @@ namespace agv_simulation
 
             errDistance.err = Pythagorean((float)errX, (float)errY);
             errSita.err = carHead - Math.Atan2(errY, errX);
-            if (errSita.err > 3.14)
-                errSita.err = errSita.err - 2 * 3.14;
-            else if (errSita.err < -3.14)
-                errSita.err = errSita.err + 2 * 3.14;
+            if (errSita.err > Math.PI)
+                errSita.err = errSita.err - 2 * Math.PI;
+            else if (errSita.err < -Math.PI)
+                errSita.err = errSita.err + 2 * Math.PI;
             // Console.WriteLine(errX + "  " + errY + "  " + errDistance.err + "  " + errSita.err); //debug
 
             carV = errDistance.kp * errDistance.err + errDistance.ki * errDistance.errsum + errDistance.kd * (errDistance.err - errDistance.errlast) + basicSpeed;
@@ -148,10 +162,10 @@ namespace agv_simulation
 
             if (carV > 30)
                 carV = 30;
-            // if (carW > 3.14)
-            //     carW = 3.14;
-            // if (carW < -3.14)
-            //     carW = -3.14;
+            // if (carW > Math.PI)
+            //     carW = Math.PI;
+            // if (carW < -Math.PI)
+            //     carW = -Math.PI;
 
             errDistance.errlast = errDistance.err;
             errDistance.errsum += errDistance.err;

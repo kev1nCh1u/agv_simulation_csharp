@@ -157,9 +157,9 @@
             this.label7.AutoSize = true;
             this.label7.Location = new System.Drawing.Point(13, 181);
             this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(42, 12);
+            this.label7.Size = new System.Drawing.Size(58, 12);
             this.label7.TabIndex = 16;
-            this.label7.Text = "Sita Kp:";
+            this.label7.Text = "Omega Kp:";
             // 
             // label14
             // 
@@ -184,9 +184,9 @@
             this.label8.AutoSize = true;
             this.label8.Location = new System.Drawing.Point(13, 232);
             this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(39, 12);
+            this.label8.Size = new System.Drawing.Size(55, 12);
             this.label8.TabIndex = 18;
-            this.label8.Text = "Sita Ki:";
+            this.label8.Text = "Omega Ki:";
             // 
             // label15
             // 
@@ -239,9 +239,9 @@
             this.label6.AutoSize = true;
             this.label6.Location = new System.Drawing.Point(13, 434);
             this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(57, 12);
+            this.label6.Size = new System.Drawing.Size(64, 12);
             this.label6.TabIndex = 14;
-            this.label6.Text = "Distant Kd:";
+            this.label6.Text = "Velocity Kd:";
             // 
             // label17
             // 
@@ -257,27 +257,27 @@
             this.label9.AutoSize = true;
             this.label9.Location = new System.Drawing.Point(13, 283);
             this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(42, 12);
+            this.label9.Size = new System.Drawing.Size(58, 12);
             this.label9.TabIndex = 20;
-            this.label9.Text = "Sita Kd:";
+            this.label9.Text = "Omega Kd:";
             // 
             // label5
             // 
             this.label5.AutoSize = true;
             this.label5.Location = new System.Drawing.Point(15, 383);
             this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(54, 12);
+            this.label5.Size = new System.Drawing.Size(61, 12);
             this.label5.TabIndex = 12;
-            this.label5.Text = "Distant Ki:";
+            this.label5.Text = "Velocity Ki:";
             // 
             // label4
             // 
             this.label4.AutoSize = true;
             this.label4.Location = new System.Drawing.Point(13, 334);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(57, 12);
+            this.label4.Size = new System.Drawing.Size(64, 12);
             this.label4.TabIndex = 10;
-            this.label4.Text = "Distant Kp:";
+            this.label4.Text = "Velocity Kp:";
             // 
             // label3
             // 
@@ -302,9 +302,9 @@
             this.label1.AutoSize = true;
             this.label1.Location = new System.Drawing.Point(13, 28);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(68, 12);
+            this.label1.Size = new System.Drawing.Size(64, 12);
             this.label1.TabIndex = 6;
-            this.label1.Text = "Front Distant:";
+            this.label1.Text = "Pure Pursuit:";
             // 
             // trackBar7
             // 
@@ -314,7 +314,7 @@
             this.trackBar7.Size = new System.Drawing.Size(228, 45);
             this.trackBar7.TabIndex = 15;
             this.trackBar7.TickFrequency = 10;
-            this.trackBar7.Value = 1;
+            this.trackBar7.Value = 50;
             // 
             // trackBar9
             // 
@@ -351,6 +351,7 @@
             this.trackBar4.Size = new System.Drawing.Size(228, 45);
             this.trackBar4.TabIndex = 9;
             this.trackBar4.TickFrequency = 10;
+            this.trackBar4.Value = 15;
             // 
             // trackBar3
             // 
@@ -370,7 +371,6 @@
             this.trackBar2.Size = new System.Drawing.Size(228, 45);
             this.trackBar2.TabIndex = 4;
             this.trackBar2.TickFrequency = 5;
-            this.trackBar2.Value = 1;
             // 
             // trackBar1
             // 
@@ -380,7 +380,7 @@
             this.trackBar1.Size = new System.Drawing.Size(228, 45);
             this.trackBar1.TabIndex = 3;
             this.trackBar1.TickFrequency = 20;
-            this.trackBar1.Value = 10;
+            this.trackBar1.Value = 100;
             // 
             // trackBar8
             // 
