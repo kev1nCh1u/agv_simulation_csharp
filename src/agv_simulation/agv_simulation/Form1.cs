@@ -37,6 +37,7 @@ namespace agv_simulation
             navPath = GenLine(new PointF(pictureBox1.Height / 2, 500), new PointF(pictureBox1.Height / 2, 50));
             carPoint = new PointF(pictureBox1.Width / 2 - 100, pictureBox1.Height - 100);
             carHead = 1.57;
+            frontPoint = 0;
         }
 
         PointF[] GenLine(PointF startPoint, PointF endPoint)
@@ -82,7 +83,7 @@ namespace agv_simulation
             return ans;
         }
 
-        int FindFrontPoint(PointF basic, PointF[] compare, int i, int front)
+        int FindFrontPoint(PointF basic, PointF[] compare, int i, int frontDis)
         {
             double errCalc;
             double err = 999999;
@@ -94,7 +95,7 @@ namespace agv_simulation
                 // errCalc = Math.Pow(Math.Pow(basic.X - compare[i].X, 2) + Math.Pow(basic.Y - compare[i].Y, 2), 0.5);
                 errCalc = Pythagorean(basic.X - compare[i].X, basic.Y - compare[i].Y);
                 // Console.WriteLine("test " + i); //debug
-                if (errCalc < err && errCalc > front)
+                if (errCalc < err && errCalc > frontDis && i >= frontPoint)
                 {
                     err = errCalc;
                     point = compare[i];
@@ -132,16 +133,25 @@ namespace agv_simulation
 
             errX = navPath[frontPoint].X - carPoint.X;
             errY = -(navPath[frontPoint].Y - carPoint.Y);
+
             errDistance.err = Pythagorean((float)errX, (float)errY);
             errSita.err = carHead - Math.Atan2(errY, errX);
+            if (errSita.err > 3.14)
+                errSita.err = errSita.err - 2 * 3.14;
+            else if (errSita.err < -3.14)
+                errSita.err = errSita.err + 2 * 3.14;
             // Console.WriteLine(errX + "  " + errY + "  " + errDistance.err + "  " + errSita.err); //debug
 
             carV = errDistance.kp * errDistance.err + errDistance.ki * errDistance.errsum + errDistance.kd * (errDistance.err - errDistance.errlast) + basicSpeed;
             carW = errSita.kp * errSita.err + errSita.ki * errSita.errsum + errSita.kd * (errSita.err - errSita.errlast);
-            // Console.WriteLine(carV + "  " + carW); //debug
+            Console.WriteLine("carhead:" + carHead + "  atan:" + Math.Atan2(errY, errX) + "  errSita:" + errSita.err + "  carV:" + carV + "  carW:" + carW); //debug
 
-            if(carV > 30)
+            if (carV > 30)
                 carV = 30;
+            // if (carW > 3.14)
+            //     carW = 3.14;
+            // if (carW < -3.14)
+            //     carW = -3.14;
 
             errDistance.errlast = errDistance.err;
             errDistance.errsum += errDistance.err;
@@ -150,7 +160,6 @@ namespace agv_simulation
 
             carPoint.X += (float)(carV * Math.Cos(carHead));
             carPoint.Y -= (float)(carV * Math.Sin(carHead));
-
             carHead -= carW;
         }
 
@@ -165,7 +174,7 @@ namespace agv_simulation
         {
             int frontDis = trackBar1.Value;
             int basicSpeed = trackBar2.Value;
-            double accuracy = trackBar3.Value / (float)100;
+            double accuracy = trackBar3.Value / (float)10;
             errDistance.kp = trackBar4.Value / (float)100;
             errDistance.ki = trackBar5.Value / (float)100;
             errDistance.kd = trackBar6.Value / (float)100;
