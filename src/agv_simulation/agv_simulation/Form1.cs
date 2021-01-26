@@ -15,9 +15,10 @@ namespace agv_simulation
 
         PointF carPoint;
         double carHead;
-        int closestPoint, frontPoint, frontDis, basicSpeed;
+        int closePoint, frontPoint, frontDis, basicSpeed;
         double accuracy;
         PointF[] navPath;
+        List<PointF> carHis;
 
         public struct ErrType
         {
@@ -30,7 +31,7 @@ namespace agv_simulation
         // double errDis = 0, errDisLast = 0, errDisSum = 0;
         // double errSita = 0, errSitaLast = 0, errSitaSum = 0;
 
-        ErrType errDistance, errSita;
+        ErrType errDis, errSita;
         double carV = 0, carW = 0;
 
         void ReStart()
@@ -39,6 +40,7 @@ namespace agv_simulation
             carPoint = new PointF(pictureBox1.Width / 2 - 100, pictureBox1.Height - 100);
             carHead = 1.57;
             frontPoint = 0;
+            carHis = new List<PointF>();
         }
 
         PointF[] GenLine(PointF startPoint, PointF endPoint)
@@ -81,12 +83,17 @@ namespace agv_simulation
             //Graphics g = pictureBox1.CreateGraphics();
 
             Pen penColorRed = new Pen(Color.Red, 4);
+            Pen penColorOrg = new Pen(Color.Orange, 1);
+            Pen penColorBlu = new Pen(Color.Blue, 1);
             Pen penColorBlack = new Pen(Color.Black, 2);
             Brush brushColorBlack = new SolidBrush(Color.Black);
             Brush brushColorOrange = new SolidBrush(Color.Orange);
 
             g.DrawCurve(penColorRed, navPath);
+            if(carHis.Count > 1)
+                g.DrawCurve(penColorBlu, carHis.ToArray());
             g.DrawLine(penColorBlack, carPoint.X, carPoint.Y, carPoint.X + 10 * (float)Math.Cos(carHead), carPoint.Y - 10 * (float)Math.Sin(carHead));
+            g.DrawLine(penColorOrg, carPoint.X, carPoint.Y, navPath[frontPoint].X , navPath[frontPoint].Y);
             g.FillEllipse(brushColorBlack, carPoint.X - 5, carPoint.Y - 5, 10, 10);
             g.FillEllipse(brushColorOrange, navPath[frontPoint].X - 5, navPath[frontPoint].Y - 5, 10, 10);
 
@@ -98,14 +105,14 @@ namespace agv_simulation
             return ans;
         }
 
-        int FindFrontPoint(PointF basic, PointF[] compare, int closestPoint, int frontDis)
+        int FindFrontPoint(PointF basic, PointF[] compare, int closePoint, int frontDis)
         {
             double errCalc;
             double err = 999999;
             PointF point = compare[compare.Length - 1];
             int place = compare.Length - 1;
             // Console.WriteLine("i:" + i); //debug
-            for (int i = closestPoint; i < compare.Length; i++)
+            for (int i = closePoint; i < compare.Length; i++)
             {
                 errCalc = Pythagorean(basic.X - compare[i].X, basic.Y - compare[i].Y);
                 if (errCalc < err && errCalc > frontDis && i >= frontPoint)
@@ -151,18 +158,18 @@ namespace agv_simulation
             errX = navPath[frontPoint].X - carPoint.X;
             errY = -(navPath[frontPoint].Y - carPoint.Y);
 
-            errDistance.err = Pythagorean((float)errX, (float)errY);
+            errDis.err = Pythagorean((float)errX, (float)errY);
             errSita.err = carHead - Math.Atan2(errY, errX);
             if (errSita.err > Math.PI)
                 errSita.err = errSita.err - 2 * Math.PI;
             else if (errSita.err < -Math.PI)
                 errSita.err = errSita.err + 2 * Math.PI;
-            // Console.WriteLine(errX + "  " + errY + "  " + errDistance.err + "  " + errSita.err); //debug
+            // Console.WriteLine(errX + "  " + errY + "  " + errDis.err + "  " + errSita.err); //debug
 
-            carV = PidFuc(errDistance.kp, errDistance.ki, errDistance.kd, errDistance.err, errDistance.errsum, errDistance.errlast);
+            carV = PidFuc(errDis.kp, errDis.ki, errDis.kd, errDis.err, errDis.errsum, errDis.errlast) + basicSpeed;
             carW = PidFuc(errSita.kp, errSita.ki, errSita.kd, errSita.err, errSita.errsum, errSita.errlast);
-            errDistance.errlast = errDistance.err;
-            errDistance.errsum += errDistance.err;
+            errDis.errlast = errDis.err;
+            errDis.errsum += errDis.err;
             errSita.errlast = errSita.err;
             errSita.errsum += errSita.err;
             // Console.WriteLine("carhead:" + carHead + "  atan:" + Math.Atan2(errY, errX) + "  errSita:" + errSita.err + "  carV:" + carV + "  carW:" + carW); //debug
@@ -172,6 +179,8 @@ namespace agv_simulation
 
         void MoveCar(double carV, double carW)
         {
+            carHis.Add(carPoint);
+
             if (carV > 30)
                 carV = 30;
             // if (carW > Math.PI)
@@ -196,9 +205,9 @@ namespace agv_simulation
             frontDis = trackBar1.Value;
             basicSpeed = trackBar2.Value;
             accuracy = trackBar3.Value / (float)10;
-            errDistance.kp = trackBar4.Value / (float)100;
-            errDistance.ki = trackBar5.Value / (float)100;
-            errDistance.kd = trackBar6.Value / (float)100;
+            errDis.kp = trackBar4.Value / (float)100;
+            errDis.ki = trackBar5.Value / (float)100;
+            errDis.kd = trackBar6.Value / (float)100;
             errSita.kp = trackBar7.Value / (float)100;
             errSita.ki = trackBar8.Value / (float)100;
             errSita.kd = trackBar9.Value / (float)100;
@@ -206,26 +215,26 @@ namespace agv_simulation
             label10.Text = Convert.ToString(frontDis);
             label11.Text = Convert.ToString(basicSpeed);
             label12.Text = Convert.ToString(accuracy);
-            label13.Text = Convert.ToString(errDistance.kp);
-            label14.Text = Convert.ToString(errDistance.ki);
-            label15.Text = Convert.ToString(errDistance.kd);
+            label13.Text = Convert.ToString(errDis.kp);
+            label14.Text = Convert.ToString(errDis.ki);
+            label15.Text = Convert.ToString(errDis.kd);
             label16.Text = Convert.ToString(errSita.kp);
             label17.Text = Convert.ToString(errSita.ki);
             label18.Text = Convert.ToString(errSita.kd);
         }
 
         private void timer1_Tick(object sender, EventArgs e)
-        {   
+        {
             GetControlInfo();
 
             // Console.WriteLine("timer1 tick");
-            closestPoint = FindClosestPoint(carPoint, navPath);
-            frontPoint = FindFrontPoint(navPath[closestPoint], navPath, closestPoint, frontDis);
+            closePoint = FindClosestPoint(carPoint, navPath);
+            frontPoint = FindFrontPoint(navPath[closePoint], navPath, closePoint, frontDis);
             PurePursuit(basicSpeed);
 
             DrawOnPic();
 
-            if (errDistance.err < accuracy && errSita.err < accuracy)
+            if (errDis.err < accuracy && errSita.err < accuracy)
             {
                 ReStart();
             }
