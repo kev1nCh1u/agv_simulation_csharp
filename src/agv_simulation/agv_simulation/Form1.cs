@@ -36,8 +36,15 @@ namespace agv_simulation
 
         void ReStart()
         {
-            navPath = GenS(new PointF(pictureBox1.Height / 2, 500), new PointF(pictureBox1.Height / 2, 50));
+            navPath = GenLine(new PointF(pictureBox1.Height / 2, 500), new PointF(pictureBox1.Height / 2, 50));
             carPoint = new PointF(pictureBox1.Width / 2 - 100, pictureBox1.Height - 100);
+
+            // navPath = GenS(new PointF(pictureBox1.Height / 2, 500), new PointF(pictureBox1.Height / 2, 50));
+            // carPoint = new PointF(pictureBox1.Width / 2 - 100, pictureBox1.Height - 100);
+
+            // navPath = GenSquare(new PointF(pictureBox1.Height / 2, 500), new PointF(pictureBox1.Height / 2, 50));
+            // carPoint = new PointF((float)pictureBox1.Width / 2 - 200, (float)450);
+
             carHead = 1.57;
             frontPoint = 0;
             carHis = new List<PointF>();
@@ -57,18 +64,68 @@ namespace agv_simulation
             return points;
         }
 
-        PointF[] GenS(PointF startPoint, PointF endPoint)
+        PointF[] GenS(PointF startPoint, PointF endPoint, int wave = 40)
         {
             int num = 450;
             PointF[] points = new PointF[num];
             for (int i = 0; i < num; i++)
             {
 
-                points[i].X = (float)pictureBox1.Width / 2 + (float)Math.Sin(i / (float)pictureBox1.Height * 2 * (Math.PI)) * 40;
+                points[i].X = (float)pictureBox1.Width / 2 + (float)Math.Sin(i / (float)pictureBox1.Height * 2 * (Math.PI)) * wave;
                 points[i].Y = (float)500 - i;
 
             }
             return points;
+        }
+
+        PointF[] GenSquare(PointF startPoint, PointF endPoint)
+        {
+            int num = 400;
+            List<PointF> points = new List<PointF>();
+            PointF point = new PointF();
+            PointF pointLast = new PointF((float)pictureBox1.Width / 2 - 200, (float)450);
+
+            for (int i = 0; i < 3; i++)
+            {
+                for (int j = 0; j < num; j++)
+                {
+                    point.X = pointLast.X;
+                    point.Y = pointLast.Y - j;
+                    points.Add(point);
+                }
+                pointLast = point;
+                num -= 80;
+
+                for (int j = 0; j < num; j++)
+                {
+
+                    point.X = pointLast.X + j;
+                    point.Y = pointLast.Y;
+                    points.Add(point);
+                }
+                pointLast = point;
+
+                for (int j = 0; j < num; j++)
+                {
+
+                    point.X = pointLast.X;
+                    point.Y = pointLast.Y + j;
+                    points.Add(point);
+                }
+                pointLast = point;
+                num -= 80;
+
+                for (int j = 0; j < num; j++)
+                {
+                    point.X = pointLast.X - j;
+                    point.Y = pointLast.Y;
+                    points.Add(point);
+                }
+                pointLast = point;
+                
+            }
+
+            return points.ToArray();
         }
 
         void DrawOnPic()
@@ -90,10 +147,10 @@ namespace agv_simulation
             Brush brushColorOrange = new SolidBrush(Color.Orange);
 
             g.DrawCurve(penColorRed, navPath);
-            if(carHis.Count > 1)
+            if (carHis.Count > 1)
                 g.DrawCurve(penColorBlu, carHis.ToArray());
             g.DrawLine(penColorBlack, carPoint.X, carPoint.Y, carPoint.X + 10 * (float)Math.Cos(carHead), carPoint.Y - 10 * (float)Math.Sin(carHead));
-            g.DrawLine(penColorOrg, carPoint.X, carPoint.Y, navPath[frontPoint].X , navPath[frontPoint].Y);
+            g.DrawLine(penColorOrg, carPoint.X, carPoint.Y, navPath[frontPoint].X, navPath[frontPoint].Y);
             g.FillEllipse(brushColorBlack, carPoint.X - 5, carPoint.Y - 5, 10, 10);
             g.FillEllipse(brushColorOrange, navPath[frontPoint].X - 5, navPath[frontPoint].Y - 5, 10, 10);
 
@@ -120,6 +177,7 @@ namespace agv_simulation
                     err = errCalc;
                     point = compare[i];
                     place = i;
+                    break;
                 }
             }
             return place;
