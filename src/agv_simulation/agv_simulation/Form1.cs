@@ -36,14 +36,35 @@ namespace agv_simulation
 
         void ReStart()
         {
-            navPath = GenLine(new PointF(pictureBox1.Height / 2, 500), new PointF(pictureBox1.Height / 2, 50));
-            carPoint = new PointF(pictureBox1.Width / 2 - 100, pictureBox1.Height - 100);
-
-            // navPath = GenS(new PointF(pictureBox1.Height / 2, 500), new PointF(pictureBox1.Height / 2, 50));
-            // carPoint = new PointF(pictureBox1.Width / 2 - 100, pictureBox1.Height - 100);
-
-            // navPath = GenSquare(new PointF(pictureBox1.Height / 2, 500), new PointF(pictureBox1.Height / 2, 50));
-            // carPoint = new PointF((float)pictureBox1.Width / 2 - 200, (float)450);
+            int pathItem = comboBox1.SelectedIndex;
+            Console.WriteLine(pathItem);
+            switch (pathItem)
+            {
+                case 0:
+                    // line path
+                    // Console.WriteLine("line");
+                    navPath = GenLine(new PointF(pictureBox1.Height / 2, 500), new PointF(pictureBox1.Height / 2, 50));
+                    carPoint = new PointF(pictureBox1.Width / 2 - 100, pictureBox1.Height - 100);
+                    break;
+                case 1:
+                    // S path
+                    // Console.WriteLine("S");
+                    navPath = GenS(new PointF(pictureBox1.Height / 2, 500), new PointF(pictureBox1.Height / 2, 50));
+                    carPoint = new PointF(pictureBox1.Width / 2 - 100, pictureBox1.Height - 100);
+                    break;
+                case 2:
+                    // square path
+                    // Console.WriteLine("square");
+                    navPath = GenSquare(new PointF(pictureBox1.Height / 2, 500), new PointF(pictureBox1.Height / 2, 50));
+                    carPoint = new PointF((float)pictureBox1.Width / 2 - 200, (float)450);
+                    break;
+                default:
+                    // line path
+                    // Console.WriteLine("line");
+                    navPath = GenLine(new PointF(pictureBox1.Height / 2, 500), new PointF(pictureBox1.Height / 2, 50));
+                    carPoint = new PointF(pictureBox1.Width / 2 - 100, pictureBox1.Height - 100);
+                    break;
+            }
 
             carHead = 1.57;
             frontPoint = 0;
@@ -209,6 +230,11 @@ namespace agv_simulation
         {
             double ans = kp * err + ki * errSum + kd * (err - errLast);
             return ans;
+        }
+
+        private void PathChange(object sender, EventArgs e)
+        {
+            ReStart();
         }
 
         void PurePursuit(int basicSpeed)
