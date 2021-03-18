@@ -26,18 +26,13 @@ namespace agv_simulation
             public double err, errlast, errsum;
         }
 
-        double errX = 0, errY = 0;
-        // double kp = 0.1, ki = 0, kd = 0;
-        // double errDis = 0, errDisLast = 0, errDisSum = 0;
-        // double errSita = 0, errSitaLast = 0, errSitaSum = 0;
-
         ErrType errDis, errSita;
-        double carV = 0, carW = 0;
+        
 
         void ReStart()
         {
             int pathItem = comboBox1.SelectedIndex;
-            Console.WriteLine(pathItem);
+            // Console.WriteLine(pathItem);
             switch (pathItem)
             {
                 case 0:
@@ -226,6 +221,11 @@ namespace agv_simulation
             return place;
         }
 
+        void PurePursuit()
+        {
+
+        }
+
         double PidFuc(double kp, double ki, double kd, double err, double errSum, double errLast)
         {
             double ans = kp * err + ki * errSum + kd * (err - errLast);
@@ -237,8 +237,11 @@ namespace agv_simulation
             ReStart();
         }
 
-        void PurePursuit(int basicSpeed)
+        void PointCarKinematics(int basicSpeed)
         {
+            double errX = 0, errY = 0;
+            double carV = 0, carW = 0;
+
             errX = navPath[frontPoint].X - carPoint.X;
             errY = -(navPath[frontPoint].Y - carPoint.Y);
 
@@ -258,19 +261,27 @@ namespace agv_simulation
             errSita.errsum += errSita.err;
             // Console.WriteLine("carhead:" + carHead + "  atan:" + Math.Atan2(errY, errX) + "  errSita:" + errSita.err + "  carV:" + carV + "  carW:" + carW); //debug
 
-            MoveCar(carV, carW);
+            MovePointCar(carV, carW);
         }
 
-        void MoveCar(double carV, double carW)
+        void MovePointCar(double carV, double carW)
         {
             carHis.Add(carPoint);
 
             if (carV > 30)
                 carV = 30;
-            // if (carW > Math.PI)
-            //     carW = Math.PI;
-            // if (carW < -Math.PI)
-            //     carW = -Math.PI;
+
+            carPoint.X += (float)(carV * Math.Cos(carHead));
+            carPoint.Y -= (float)(carV * Math.Sin(carHead));
+            carHead -= carW;
+        }
+
+        void MoveForklift(double carV, double carW)
+        {
+            carHis.Add(carPoint);
+
+            if (carV > 30)
+                carV = 30;
 
             carPoint.X += (float)(carV * Math.Cos(carHead));
             carPoint.Y -= (float)(carV * Math.Sin(carHead));
@@ -314,7 +325,7 @@ namespace agv_simulation
             // Console.WriteLine("timer1 tick");
             closePoint = FindClosestPoint(carPoint, navPath);
             frontPoint = FindFrontPoint(navPath[closePoint], navPath, closePoint, frontDis);
-            PurePursuit(basicSpeed);
+            PointCarKinematics(basicSpeed);
 
             DrawOnPic();
 
