@@ -15,6 +15,7 @@ namespace agv_simulation
 
         PointF carPoint;
         double carHead;
+        double wheelHead;
         int closePoint, frontPoint, frontDis, basicSpeed;
         double accuracy;
         PointF[] navPath;
@@ -62,6 +63,7 @@ namespace agv_simulation
             }
 
             carHead = 1.57;
+            wheelHead = carHead;
             frontPoint = 0;
             carHis = new List<PointF>();
         }
@@ -158,17 +160,27 @@ namespace agv_simulation
             Pen penColorRed = new Pen(Color.Red, 4);
             Pen penColorOrg = new Pen(Color.Orange, 1);
             Pen penColorBlu = new Pen(Color.Blue, 1);
-            Pen penColorBlack = new Pen(Color.Black, 2);
+            Pen penColorBlack = new Pen(Color.Black, 4);
             Brush brushColorBlack = new SolidBrush(Color.Black);
             Brush brushColorOrange = new SolidBrush(Color.Orange);
 
             g.DrawCurve(penColorRed, navPath);
             if (carHis.Count > 1)
                 g.DrawCurve(penColorBlu, carHis.ToArray());
-            g.DrawLine(penColorBlack, carPoint.X, carPoint.Y, carPoint.X + 10 * (float)Math.Cos(carHead), carPoint.Y - 10 * (float)Math.Sin(carHead));
+
             g.DrawLine(penColorOrg, carPoint.X, carPoint.Y, navPath[frontPoint].X, navPath[frontPoint].Y);
-            g.FillEllipse(brushColorBlack, carPoint.X - 5, carPoint.Y - 5, 10, 10);
             g.FillEllipse(brushColorOrange, navPath[frontPoint].X - 5, navPath[frontPoint].Y - 5, 10, 10);
+
+            g.DrawLine(penColorBlack, carPoint.X, carPoint.Y, carPoint.X + 15 * (float)Math.Cos(carHead), carPoint.Y - 15 * (float)Math.Sin(carHead));
+            g.FillEllipse(brushColorBlack, carPoint.X - 5, carPoint.Y - 5, 10, 10);
+            
+
+            if(comboBox2.SelectedIndex == 1)
+            {
+                PointF wheelPoint = new PointF(carPoint.X - 50 * (float)Math.Cos(carHead), carPoint.Y + 50 * (float)Math.Sin(carHead));
+                g.DrawLine(penColorBlack, wheelPoint.X, wheelPoint.Y, wheelPoint.X + 15 * (float)Math.Cos(wheelHead), wheelPoint.Y - 15 * (float)Math.Sin(wheelHead));
+                g.FillEllipse(brushColorBlack, wheelPoint.X - 5, wheelPoint.Y - 5, 10, 10);
+            }
 
         }
 
@@ -261,7 +273,11 @@ namespace agv_simulation
             errSita.errsum += errSita.err;
             // Console.WriteLine("carhead:" + carHead + "  atan:" + Math.Atan2(errY, errX) + "  errSita:" + errSita.err + "  carV:" + carV + "  carW:" + carW); //debug
 
-            MovePointCar(carV, carW);
+            if(comboBox2.SelectedIndex == 0)
+                MovePointCar(carV, carW);
+            else if(comboBox2.SelectedIndex == 1)
+                MoveForklift(carV, carW);
+
         }
 
         void MovePointCar(double carV, double carW)
@@ -278,6 +294,7 @@ namespace agv_simulation
 
         void MoveForklift(double carV, double carW)
         {
+            int Lb = 30;
             carHis.Add(carPoint);
 
             if (carV > 30)
@@ -286,6 +303,8 @@ namespace agv_simulation
             carPoint.X += (float)(carV * Math.Cos(carHead));
             carPoint.Y -= (float)(carV * Math.Sin(carHead));
             carHead -= carW;
+            wheelHead = carHead - Math.Atan(carW * -1 * Lb / carV);
+            // wheelHead = carHead;
         }
 
         public Form1()
