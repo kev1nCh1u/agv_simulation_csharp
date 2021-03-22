@@ -161,12 +161,18 @@ namespace agv_simulation
             Pen penColorOrg = new Pen(Color.Orange, 1);
             Pen penColorBlu = new Pen(Color.Blue, 1);
             Pen penColorBlack = new Pen(Color.Black, 4);
+            Pen penColorThinBlack = new Pen(Color.Black, 1);
+            Pen penColorBigBlack = new Pen(Color.Black, 10);
+
+            Brush brushColorBlue = new SolidBrush(Color.Blue);
             Brush brushColorBlack = new SolidBrush(Color.Black);
             Brush brushColorOrange = new SolidBrush(Color.Orange);
 
             g.DrawCurve(penColorRed, navPath);
             if (carHis.Count > 1)
                 g.DrawCurve(penColorBlu, carHis.ToArray());
+
+            g.FillEllipse(brushColorBlue, navPath[closePoint].X - 5,navPath[closePoint].Y - 5, 10, 10);
 
             g.DrawLine(penColorOrg, carPoint.X, carPoint.Y, navPath[frontPoint].X, navPath[frontPoint].Y);
             g.FillEllipse(brushColorOrange, navPath[frontPoint].X - 5, navPath[frontPoint].Y - 5, 10, 10);
@@ -177,9 +183,27 @@ namespace agv_simulation
 
             if(comboBox2.SelectedIndex == 1)
             {
+                PointF wheelPoint = new PointF(carPoint.X + 50 * (float)Math.Cos(carHead), carPoint.Y - 50 * (float)Math.Sin(carHead));
+
+                g.DrawLine(penColorThinBlack, wheelPoint.X, wheelPoint.Y, carPoint.X, carPoint.Y);
+
+                // g.DrawLine(penColorBlack, wheelPoint.X, wheelPoint.Y, wheelPoint.X + 15 * (float)Math.Cos(wheelHead), wheelPoint.Y - 15 * (float)Math.Sin(wheelHead));
+                // g.FillEllipse(brushColorBlack, wheelPoint.X - 5, wheelPoint.Y - 5, 10, 10);
+
+                g.DrawLine(penColorBigBlack, wheelPoint.X, wheelPoint.Y, wheelPoint.X + 10 * (float)Math.Cos(wheelHead), wheelPoint.Y - 10 * (float)Math.Sin(wheelHead));
+                g.DrawLine(penColorBigBlack, wheelPoint.X, wheelPoint.Y, wheelPoint.X - 10 * (float)Math.Cos(wheelHead), wheelPoint.Y + 10 * (float)Math.Sin(wheelHead));
+            }
+            if(comboBox2.SelectedIndex == 2)
+            {
                 PointF wheelPoint = new PointF(carPoint.X - 50 * (float)Math.Cos(carHead), carPoint.Y + 50 * (float)Math.Sin(carHead));
-                g.DrawLine(penColorBlack, wheelPoint.X, wheelPoint.Y, wheelPoint.X + 15 * (float)Math.Cos(wheelHead), wheelPoint.Y - 15 * (float)Math.Sin(wheelHead));
-                g.FillEllipse(brushColorBlack, wheelPoint.X - 5, wheelPoint.Y - 5, 10, 10);
+
+                g.DrawLine(penColorThinBlack, wheelPoint.X, wheelPoint.Y, carPoint.X, carPoint.Y);
+
+                // g.DrawLine(penColorBlack, wheelPoint.X, wheelPoint.Y, wheelPoint.X + 15 * (float)Math.Cos(wheelHead), wheelPoint.Y - 15 * (float)Math.Sin(wheelHead));
+                // g.FillEllipse(brushColorBlack, wheelPoint.X - 5, wheelPoint.Y - 5, 10, 10);
+
+                g.DrawLine(penColorBigBlack, wheelPoint.X, wheelPoint.Y, wheelPoint.X + 10 * (float)Math.Cos(wheelHead), wheelPoint.Y - 10 * (float)Math.Sin(wheelHead));
+                g.DrawLine(penColorBigBlack, wheelPoint.X, wheelPoint.Y, wheelPoint.X - 10 * (float)Math.Cos(wheelHead), wheelPoint.Y + 10 * (float)Math.Sin(wheelHead));
             }
 
         }
@@ -276,7 +300,9 @@ namespace agv_simulation
             if(comboBox2.SelectedIndex == 0)
                 MovePointCar(carV, carW);
             else if(comboBox2.SelectedIndex == 1)
-                MoveForklift(carV, carW);
+                MoveForkliftFront(carV, carW);
+            else if(comboBox2.SelectedIndex == 2)
+                MoveForkliftReverse(carV, carW);
 
         }
 
@@ -292,7 +318,20 @@ namespace agv_simulation
             carHead -= carW;
         }
 
-        void MoveForklift(double carV, double carW)
+        void MoveForkliftFront(double carV, double carW)
+        {
+            int Lb = 30;
+            carHis.Add(carPoint);
+
+            if (carV > 30)
+                carV = 30;
+
+            carPoint.X += (float)(carV * Math.Cos(carHead));
+            carPoint.Y -= (float)(carV * Math.Sin(carHead));
+            carHead -= carW;
+            wheelHead = carHead + Math.Atan(carW * -1 * Lb / carV);
+        }
+        void MoveForkliftReverse(double carV, double carW)
         {
             int Lb = 30;
             carHis.Add(carPoint);
@@ -304,7 +343,6 @@ namespace agv_simulation
             carPoint.Y -= (float)(carV * Math.Sin(carHead));
             carHead -= carW;
             wheelHead = carHead - Math.Atan(carW * -1 * Lb / carV);
-            // wheelHead = carHead;
         }
 
         public Form1()
@@ -345,6 +383,9 @@ namespace agv_simulation
             closePoint = FindClosestPoint(carPoint, navPath);
             frontPoint = FindFrontPoint(navPath[closePoint], navPath, closePoint, frontDis);
             PointCarKinematics(basicSpeed);
+
+            closePoint = FindClosestPoint(carPoint, navPath);
+            frontPoint = FindFrontPoint(navPath[closePoint], navPath, closePoint, frontDis);
 
             DrawOnPic();
 
