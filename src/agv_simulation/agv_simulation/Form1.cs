@@ -180,22 +180,22 @@ namespace agv_simulation
             g.DrawLine(penColorBlack, carPoint.X, carPoint.Y, carPoint.X + 15 * (float)Math.Cos(carHead), carPoint.Y - 15 * (float)Math.Sin(carHead));
             g.FillEllipse(brushColorBlack, carPoint.X - 5, carPoint.Y - 5, 10, 10);
             
+            PointF wheelPoint = new PointF();
 
             if(comboBox2.SelectedIndex == 1)
             {
-                PointF wheelPoint = new PointF(carPoint.X + 50 * (float)Math.Cos(carHead), carPoint.Y - 50 * (float)Math.Sin(carHead));
+                wheelPoint = new PointF(carPoint.X + 50 * (float)Math.Cos(carHead), carPoint.Y - 50 * (float)Math.Sin(carHead));
 
-                g.DrawLine(penColorThinBlack, wheelPoint.X, wheelPoint.Y, carPoint.X, carPoint.Y);
-
-                // g.DrawLine(penColorBlack, wheelPoint.X, wheelPoint.Y, wheelPoint.X + 15 * (float)Math.Cos(wheelHead), wheelPoint.Y - 15 * (float)Math.Sin(wheelHead));
-                // g.FillEllipse(brushColorBlack, wheelPoint.X - 5, wheelPoint.Y - 5, 10, 10);
-
-                g.DrawLine(penColorBigBlack, wheelPoint.X, wheelPoint.Y, wheelPoint.X + 10 * (float)Math.Cos(wheelHead), wheelPoint.Y - 10 * (float)Math.Sin(wheelHead));
-                g.DrawLine(penColorBigBlack, wheelPoint.X, wheelPoint.Y, wheelPoint.X - 10 * (float)Math.Cos(wheelHead), wheelPoint.Y + 10 * (float)Math.Sin(wheelHead));
             }
-            if(comboBox2.SelectedIndex == 2)
+            else if(comboBox2.SelectedIndex == 2)
             {
-                PointF wheelPoint = new PointF(carPoint.X - 50 * (float)Math.Cos(carHead), carPoint.Y + 50 * (float)Math.Sin(carHead));
+                wheelPoint = new PointF(carPoint.X - 50 * (float)Math.Cos(carHead), carPoint.Y + 50 * (float)Math.Sin(carHead));
+            }
+
+            if(comboBox2.SelectedIndex == 1 || comboBox2.SelectedIndex == 2)
+            {
+                PointF carPointRight = new PointF(carPoint.X + 30 * (float)Math.Cos(carHead + 1.57), carPoint.Y - 30 * (float)Math.Sin(carHead + 1.57));
+                PointF carPointLift = new PointF(carPoint.X + 30 * (float)Math.Cos(carHead - 1.57), carPoint.Y - 30 * (float)Math.Sin(carHead - 1.57));
 
                 g.DrawLine(penColorThinBlack, wheelPoint.X, wheelPoint.Y, carPoint.X, carPoint.Y);
 
@@ -204,6 +204,14 @@ namespace agv_simulation
 
                 g.DrawLine(penColorBigBlack, wheelPoint.X, wheelPoint.Y, wheelPoint.X + 10 * (float)Math.Cos(wheelHead), wheelPoint.Y - 10 * (float)Math.Sin(wheelHead));
                 g.DrawLine(penColorBigBlack, wheelPoint.X, wheelPoint.Y, wheelPoint.X - 10 * (float)Math.Cos(wheelHead), wheelPoint.Y + 10 * (float)Math.Sin(wheelHead));
+
+                g.DrawLine(penColorThinBlack, carPointRight.X, carPointRight.Y, carPoint.X, carPoint.Y);
+                g.DrawLine(penColorBigBlack, carPointRight.X, carPointRight.Y, carPointRight.X + 10 * (float)Math.Cos(carHead), carPointRight.Y - 10 * (float)Math.Sin(carHead));
+                g.DrawLine(penColorBigBlack, carPointRight.X, carPointRight.Y, carPointRight.X - 10 * (float)Math.Cos(carHead), carPointRight.Y + 10 * (float)Math.Sin(carHead));
+
+                g.DrawLine(penColorThinBlack, carPointLift.X, carPointLift.Y, carPoint.X, carPoint.Y);
+                g.DrawLine(penColorBigBlack, carPointLift.X, carPointLift.Y, carPointLift.X + 10 * (float)Math.Cos(carHead), carPointLift.Y - 10 * (float)Math.Sin(carHead));
+                g.DrawLine(penColorBigBlack, carPointLift.X, carPointLift.Y, carPointLift.X - 10 * (float)Math.Cos(carHead), carPointLift.Y + 10 * (float)Math.Sin(carHead));
             }
 
         }
@@ -254,6 +262,15 @@ namespace agv_simulation
                 }
             }
             // Console.WriteLine(i); //debug
+            return place;
+        }
+
+        int FindRadiusPoint(PointF basic, PointF[] compare)
+        {
+            int place = 0;
+
+            
+
             return place;
         }
 
