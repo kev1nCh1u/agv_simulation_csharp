@@ -18,7 +18,7 @@ namespace agv_simulation
         double wheelHead;
         int closePoint, frontPoint, frontDis, basicSpeed;
         double accuracy;
-        PointF[] navPath;
+        PointF[] navPath, circlePoints;
         List<PointF> carHis;
 
         public struct ErrType
@@ -158,6 +158,7 @@ namespace agv_simulation
             //Graphics g = pictureBox1.CreateGraphics();
 
             Pen penColorRed = new Pen(Color.Red, 4);
+            Pen penColorGray = new Pen(Color.Gray, 1);
             Pen penColorOrg = new Pen(Color.Orange, 1);
             Pen penColorBlu = new Pen(Color.Blue, 1);
             Pen penColorBlack = new Pen(Color.Black, 4);
@@ -169,6 +170,8 @@ namespace agv_simulation
             Brush brushColorOrange = new SolidBrush(Color.Orange);
 
             g.DrawCurve(penColorRed, navPath);
+            if(comboBox3.SelectedIndex == 1)
+                g.DrawCurve(penColorGray, circlePoints);
             if (carHis.Count > 1)
                 g.DrawCurve(penColorBlu, carHis.ToArray());
 
@@ -265,11 +268,37 @@ namespace agv_simulation
             return place;
         }
 
-        int FindRadiusPoint(PointF basic, PointF[] compare)
+        PointF[] GenCarCircle(PointF basic, PointF[] compare, int frontDis)
+        {
+            PointF point = new PointF(0, 0);
+            PointF[] circlePoints = new PointF[314*2 + 1];
+
+            for (int i = -314, j = 0; i <= 314; i++, j++)
+            {
+                point.X = (int)(basic.X + frontDis * (float)Math.Cos((float)i/100));
+                point.Y = (int)(basic.Y + frontDis * (float)Math.Sin((float)i/100));
+                circlePoints[j] = point;
+            }
+
+            return circlePoints;
+        }
+
+        int FindRadiusPoint(PointF[] basic, PointF[] compare)
         {
             int place = 0;
 
-            
+            for(int i = 0; i <= 314*2; i++)
+            {
+                for(int j = 0; j < compare.Length; j++)
+                {
+                    // Console.WriteLine(basic[i].X + " " + basic[i].Y + " " + compare[j].X + " " + compare[j].Y);
+                    if(basic[i] == compare[j])
+                    {
+                        if(j > place)
+                            place = j;
+                    }
+                }
+            }
 
             return place;
         }
@@ -397,12 +426,20 @@ namespace agv_simulation
             GetControlInfo();
 
             // Console.WriteLine("timer1 tick");
-            closePoint = FindClosestPoint(carPoint, navPath);
-            frontPoint = FindFrontPoint(navPath[closePoint], navPath, closePoint, frontDis);
-            PointCarKinematics(basicSpeed);
+            if(comboBox3.SelectedIndex == 0)
+            {
+                closePoint = FindClosestPoint(carPoint, navPath);
+                frontPoint = FindFrontPoint(navPath[closePoint], navPath, closePoint, frontDis);
+            }
+            else if(comboBox3.SelectedIndex == 1)
+            {
+                closePoint = FindClosestPoint(carPoint, navPath);
+                circlePoints = GenCarCircle(carPoint, navPath, frontDis);
+                frontPoint = FindRadiusPoint(circlePoints, navPath);
+            }
 
+            PointCarKinematics(basicSpeed);
             closePoint = FindClosestPoint(carPoint, navPath);
-            frontPoint = FindFrontPoint(navPath[closePoint], navPath, closePoint, frontDis);
 
             DrawOnPic();
 

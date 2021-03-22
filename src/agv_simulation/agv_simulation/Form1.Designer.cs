@@ -434,11 +434,11 @@
             // label21
             // 
             this.label21.AutoSize = true;
-            this.label21.Location = new System.Drawing.Point(196, 25);
+            this.label21.Location = new System.Drawing.Point(182, 25);
             this.label21.Name = "label21";
-            this.label21.Size = new System.Drawing.Size(22, 12);
+            this.label21.Size = new System.Drawing.Size(55, 12);
             this.label21.TabIndex = 30;
-            this.label21.Text = "nan";
+            this.label21.Text = "Pure Pursit";
             // 
             // label20
             // 
@@ -461,10 +461,14 @@
             // comboBox3
             // 
             this.comboBox3.FormattingEnabled = true;
+            this.comboBox3.Items.AddRange(new object[] {
+            "路徑",
+            "半徑"});
             this.comboBox3.Location = new System.Drawing.Point(174, 44);
             this.comboBox3.Name = "comboBox3";
             this.comboBox3.Size = new System.Drawing.Size(71, 20);
             this.comboBox3.TabIndex = 5;
+            this.comboBox3.Text = "路徑";
             // 
             // comboBox2
             // 
