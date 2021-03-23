@@ -292,14 +292,19 @@ namespace agv_simulation
                 for(int j = 0; j < compare.Length; j++)
                 {
                     // Console.WriteLine(basic[i].X + " " + basic[i].Y + " " + compare[j].X + " " + compare[j].Y);
-                    if((basic[i] == compare[j]) && (j > frontNum))
+                    if(((int)basic[i].X == (int)compare[j].X) && ((int)basic[i].Y == (int)compare[j].Y) && (j > frontNum))
                     {
                         if(j > placeNum)
+                        {
                             placeNum = j;
+                            // Console.WriteLine(placeNum + " " + j);
+                        }
                     }
                 }
             }
-
+            // if((placeNum  == frontNum) && placeNum != 0)
+            //     placeNum = compare.Length - 1;
+                
             return placeNum;
         }
 
