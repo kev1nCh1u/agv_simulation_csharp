@@ -58,7 +58,7 @@ namespace agv_simulation
                     // GenCircle path
                     // Console.WriteLine("GenCircle");
                     waypoints = GenCircle();
-                    carPoint = new PointF((float)pictureBox1.Width / 2 - 200, (float)250);
+                    carPoint = new PointF((float)pictureBox1.Width / 2 - 250, (float)350);
                     break;
                 default:
                     // line path
@@ -152,7 +152,7 @@ namespace agv_simulation
             return points.ToArray();
         }
 
-        PointF[] GenCircle(int width = 40)
+        PointF[] GenCircle()
         {
             PointF point = new PointF();
             PointF centerPoint = new PointF(pictureBox1.Width / 2, pictureBox1.Height / 2);
@@ -160,17 +160,20 @@ namespace agv_simulation
             List<PointF> points = new List<PointF>();
             float radius = (float)Pythagorean(centerPoint.X - startPoint.X, centerPoint.Y - startPoint.Y);
             
-            for(int k = 0; k < 3; k++)
+            while(radius > 0)
             {
-                float perNum = (float)0.1;
+                float perNum = (float)0.05;
                 for (float i = (float)-3.14, j = 0; i <= (float)3.14; i=i+perNum, j++)
                 {
                     point.X = (int)(centerPoint.X + radius * (float)Math.Cos((float)i));
                     point.Y = (int)(centerPoint.Y + radius * (float)Math.Sin((float)i));
                     points.Add(point);
-                    radius = radius - perNum*10;
+                    radius = radius - perNum*14;
+                    if(radius < 0)
+                        break;
                 }
             }
+
             return points.ToArray();
         }
 
@@ -216,7 +219,6 @@ namespace agv_simulation
             if(comboBox2.SelectedIndex == 1)
             {
                 wheelPoint = new PointF(carPoint.X + 50 * (float)Math.Cos(carHead), carPoint.Y - 50 * (float)Math.Sin(carHead));
-
             }
             else if(comboBox2.SelectedIndex == 2)
             {
@@ -244,7 +246,6 @@ namespace agv_simulation
                 g.DrawLine(penColorBigBlack, carPointLift.X, carPointLift.Y, carPointLift.X + 10 * (float)Math.Cos(carHead), carPointLift.Y - 10 * (float)Math.Sin(carHead));
                 g.DrawLine(penColorBigBlack, carPointLift.X, carPointLift.Y, carPointLift.X - 10 * (float)Math.Cos(carHead), carPointLift.Y + 10 * (float)Math.Sin(carHead));
             }
-
         }
 
         double Pythagorean(float x, float y)
@@ -319,8 +320,9 @@ namespace agv_simulation
             {
                 for(int j = 0; j < compare.Length; j++)
                 {
+                    int precision = 2;
                     // Console.WriteLine(basic[i].X + " " + basic[i].Y + " " + compare[j].X + " " + compare[j].Y);
-                    if(((int)basic[i].X == (int)compare[j].X) && ((int)basic[i].Y == (int)compare[j].Y) && (j > frontNum))
+                    if((Math.Abs(basic[i].X - compare[j].X) < precision) && (Math.Abs(basic[i].Y - compare[j].Y) < precision) && (j > frontNum))
                     {
                         if(j > placeNum)
                         {
