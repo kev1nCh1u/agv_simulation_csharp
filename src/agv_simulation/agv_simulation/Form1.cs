@@ -16,9 +16,9 @@ namespace agv_simulation
         PointF carPoint;
         double carHead;
         double wheelHead;
-        int closePoint, frontPoint, frontDis, basicSpeed;
+        int closeNum, frontNum, frontDis, basicSpeed;
         double accuracy;
-        PointF[] navPath, circlePoints;
+        PointF[] waypoints, circlePoints;
         List<PointF> carHis;
 
         public struct ErrType
@@ -39,32 +39,32 @@ namespace agv_simulation
                 case 0:
                     // line path
                     // Console.WriteLine("line");
-                    navPath = GenLine(new PointF(pictureBox1.Height / 2, 500), new PointF(pictureBox1.Height / 2, 50));
+                    waypoints = GenLine(new PointF(pictureBox1.Height / 2, 500), new PointF(pictureBox1.Height / 2, 50));
                     carPoint = new PointF(pictureBox1.Width / 2 - 100, pictureBox1.Height - 100);
                     break;
                 case 1:
                     // S path
                     // Console.WriteLine("S");
-                    navPath = GenS(new PointF(pictureBox1.Height / 2, 500), new PointF(pictureBox1.Height / 2, 50));
+                    waypoints = GenS(new PointF(pictureBox1.Height / 2, 500), new PointF(pictureBox1.Height / 2, 50));
                     carPoint = new PointF(pictureBox1.Width / 2 - 100, pictureBox1.Height - 100);
                     break;
                 case 2:
                     // square path
                     // Console.WriteLine("square");
-                    navPath = GenSquare(new PointF(pictureBox1.Height / 2, 500), new PointF(pictureBox1.Height / 2, 50));
+                    waypoints = GenSquare(new PointF(pictureBox1.Height / 2, 500), new PointF(pictureBox1.Height / 2, 50));
                     carPoint = new PointF((float)pictureBox1.Width / 2 - 200, (float)450);
                     break;
                 default:
                     // line path
                     // Console.WriteLine("line");
-                    navPath = GenLine(new PointF(pictureBox1.Height / 2, 500), new PointF(pictureBox1.Height / 2, 50));
+                    waypoints = GenLine(new PointF(pictureBox1.Height / 2, 500), new PointF(pictureBox1.Height / 2, 50));
                     carPoint = new PointF(pictureBox1.Width / 2 - 100, pictureBox1.Height - 100);
                     break;
             }
 
             carHead = 1.57;
             wheelHead = carHead;
-            frontPoint = 0;
+            frontNum = 0;
             carHis = new List<PointF>();
         }
 
@@ -169,16 +169,16 @@ namespace agv_simulation
             Brush brushColorBlack = new SolidBrush(Color.Black);
             Brush brushColorOrange = new SolidBrush(Color.Orange);
 
-            g.DrawCurve(penColorRed, navPath);
+            g.DrawCurve(penColorRed, waypoints);
             if(comboBox3.SelectedIndex == 1)
                 g.DrawCurve(penColorGray, circlePoints);
             if (carHis.Count > 1)
                 g.DrawCurve(penColorBlu, carHis.ToArray());
 
-            g.FillEllipse(brushColorBlue, navPath[closePoint].X - 5,navPath[closePoint].Y - 5, 10, 10);
+            g.FillEllipse(brushColorBlue, waypoints[closeNum].X - 5,waypoints[closeNum].Y - 5, 10, 10);
 
-            g.DrawLine(penColorOrg, carPoint.X, carPoint.Y, navPath[frontPoint].X, navPath[frontPoint].Y);
-            g.FillEllipse(brushColorOrange, navPath[frontPoint].X - 5, navPath[frontPoint].Y - 5, 10, 10);
+            g.DrawLine(penColorOrg, carPoint.X, carPoint.Y, waypoints[frontNum].X, waypoints[frontNum].Y);
+            g.FillEllipse(brushColorOrange, waypoints[frontNum].X - 5, waypoints[frontNum].Y - 5, 10, 10);
 
             g.DrawLine(penColorBlack, carPoint.X, carPoint.Y, carPoint.X + 15 * (float)Math.Cos(carHead), carPoint.Y - 15 * (float)Math.Sin(carHead));
             g.FillEllipse(brushColorBlack, carPoint.X - 5, carPoint.Y - 5, 10, 10);
@@ -225,33 +225,12 @@ namespace agv_simulation
             return ans;
         }
 
-        int FindFrontPoint(PointF basic, PointF[] compare, int closePoint, int frontDis)
-        {
-            double errCalc;
-            double err = 999999;
-            PointF point = compare[compare.Length - 1];
-            int place = compare.Length - 1;
-            // Console.WriteLine("i:" + i); //debug
-            for (int i = closePoint; i < compare.Length; i++)
-            {
-                errCalc = Pythagorean(basic.X - compare[i].X, basic.Y - compare[i].Y);
-                if (errCalc < err && errCalc > frontDis && i >= frontPoint)
-                {
-                    err = errCalc;
-                    point = compare[i];
-                    place = i;
-                    break;
-                }
-            }
-            return place;
-        }
-
         int FindClosestPoint(PointF basic, PointF[] compare)
         {
             double errCalc;
             double err = 999999;
             PointF point = new PointF(0, 0);
-            int place = 0;
+            int placeNum = 0;
             for (int i = 0; i < compare.Length; i++)
             {
                 // errCalc = Math.Pow(Math.Pow(basic.X - compare[i].X, 2) + Math.Pow(basic.Y - compare[i].Y, 2), 0.5);
@@ -261,11 +240,32 @@ namespace agv_simulation
                 {
                     err = errCalc;
                     point = compare[i];
-                    place = i;
+                    placeNum = i;
                 }
             }
             // Console.WriteLine(i); //debug
-            return place;
+            return placeNum;
+        }
+
+        int FindFrontPoint(PointF basic, PointF[] compare, int closeNum, int frontDis, int frontNum = 0)
+        {
+            double errCalc;
+            double err = 999999;
+            PointF point = compare[compare.Length - 1];
+            int placeNum = compare.Length - 1;
+            // Console.WriteLine("i:" + i); //debug
+            for (int i = closeNum; i < compare.Length; i++)
+            {
+                errCalc = Pythagorean(basic.X - compare[i].X, basic.Y - compare[i].Y);
+                if ((errCalc < err) && (errCalc > frontDis) && (i > frontNum))
+                {
+                    err = errCalc;
+                    point = compare[i];
+                    placeNum = i;
+                    break;
+                }
+            }
+            return placeNum;
         }
 
         PointF[] GenCarCircle(PointF basic, PointF[] compare, int frontDis)
@@ -283,24 +283,24 @@ namespace agv_simulation
             return circlePoints;
         }
 
-        int FindRadiusPoint(PointF[] basic, PointF[] compare)
+        int FindRadiusPoint(PointF[] basic, PointF[] compare, int frontNum = 0)
         {
-            int place = 0;
+            int placeNum = frontNum;
 
             for(int i = 0; i <= 314*2; i++)
             {
                 for(int j = 0; j < compare.Length; j++)
                 {
                     // Console.WriteLine(basic[i].X + " " + basic[i].Y + " " + compare[j].X + " " + compare[j].Y);
-                    if(basic[i] == compare[j])
+                    if((basic[i] == compare[j]) && (j > frontNum))
                     {
-                        if(j > place)
-                            place = j;
+                        if(j > placeNum)
+                            placeNum = j;
                     }
                 }
             }
 
-            return place;
+            return placeNum;
         }
 
         void PurePursuit()
@@ -319,13 +319,13 @@ namespace agv_simulation
             ReStart();
         }
 
-        void PointCarKinematics(int basicSpeed)
+        void Kinematics(int basicSpeed)
         {
             double errX = 0, errY = 0;
             double carV = 0, carW = 0;
 
-            errX = navPath[frontPoint].X - carPoint.X;
-            errY = -(navPath[frontPoint].Y - carPoint.Y);
+            errX = waypoints[frontNum].X - carPoint.X;
+            errY = -(waypoints[frontNum].Y - carPoint.Y);
 
             errDis.err = Pythagorean((float)errX, (float)errY);
             errSita.err = carHead - Math.Atan2(errY, errX);
@@ -428,18 +428,18 @@ namespace agv_simulation
             // Console.WriteLine("timer1 tick");
             if(comboBox3.SelectedIndex == 0)
             {
-                closePoint = FindClosestPoint(carPoint, navPath);
-                frontPoint = FindFrontPoint(navPath[closePoint], navPath, closePoint, frontDis);
+                closeNum = FindClosestPoint(carPoint, waypoints);
+                frontNum = FindFrontPoint(waypoints[closeNum], waypoints, closeNum, frontDis, frontNum);
             }
             else if(comboBox3.SelectedIndex == 1)
             {
-                closePoint = FindClosestPoint(carPoint, navPath);
-                circlePoints = GenCarCircle(carPoint, navPath, frontDis);
-                frontPoint = FindRadiusPoint(circlePoints, navPath);
+                closeNum = FindClosestPoint(carPoint, waypoints);
+                circlePoints = GenCarCircle(carPoint, waypoints, frontDis);
+                frontNum = FindRadiusPoint(circlePoints, waypoints, frontNum);
             }
 
-            PointCarKinematics(basicSpeed);
-            closePoint = FindClosestPoint(carPoint, navPath);
+            Kinematics(basicSpeed);
+            closeNum = FindClosestPoint(carPoint, waypoints);
 
             DrawOnPic();
 
