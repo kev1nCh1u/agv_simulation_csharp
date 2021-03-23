@@ -51,8 +51,14 @@ namespace agv_simulation
                 case 2:
                     // square path
                     // Console.WriteLine("square");
-                    waypoints = GenSquare(new PointF(pictureBox1.Height / 2, 500), new PointF(pictureBox1.Height / 2, 50));
+                    waypoints = GenSquare();
                     carPoint = new PointF((float)pictureBox1.Width / 2 - 200, (float)450);
+                    break;
+                case 3:
+                    // GenCircle path
+                    // Console.WriteLine("GenCircle");
+                    waypoints = GenCircle();
+                    carPoint = new PointF((float)pictureBox1.Width / 2 - 200, (float)250);
                     break;
                 default:
                     // line path
@@ -96,7 +102,7 @@ namespace agv_simulation
             return points;
         }
 
-        PointF[] GenSquare(PointF startPoint, PointF endPoint)
+        PointF[] GenSquare()
         {
             int num = 400;
             List<PointF> points = new List<PointF>();
@@ -143,6 +149,28 @@ namespace agv_simulation
                 
             }
 
+            return points.ToArray();
+        }
+
+        PointF[] GenCircle(int width = 40)
+        {
+            PointF point = new PointF();
+            PointF centerPoint = new PointF(pictureBox1.Width / 2, pictureBox1.Height / 2);
+            PointF startPoint = new PointF((float)pictureBox1.Width / 2 - 200, (float)450);
+            List<PointF> points = new List<PointF>();
+            float radius = (float)Pythagorean(centerPoint.X - startPoint.X, centerPoint.Y - startPoint.Y);
+            
+            for(int k = 0; k < 3; k++)
+            {
+                float perNum = (float)0.1;
+                for (float i = (float)-3.14, j = 0; i <= (float)3.14; i=i+perNum, j++)
+                {
+                    point.X = (int)(centerPoint.X + radius * (float)Math.Cos((float)i));
+                    point.Y = (int)(centerPoint.Y + radius * (float)Math.Sin((float)i));
+                    points.Add(point);
+                    radius = radius - perNum*10;
+                }
+            }
             return points.ToArray();
         }
 
@@ -257,7 +285,7 @@ namespace agv_simulation
             for (int i = closeNum; i < compare.Length; i++)
             {
                 errCalc = Pythagorean(basic.X - compare[i].X, basic.Y - compare[i].Y);
-                if ((errCalc < err) && (errCalc > frontDis) && (i > frontNum))
+                if ((errCalc < err) && (errCalc > frontDis) && (i >= frontNum))
                 {
                     err = errCalc;
                     point = compare[i];

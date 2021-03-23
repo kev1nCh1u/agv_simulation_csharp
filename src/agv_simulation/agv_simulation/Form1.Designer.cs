@@ -407,7 +407,8 @@
             this.comboBox1.Items.AddRange(new object[] {
             "直線",
             "S型",
-            "方形"});
+            "方形",
+            "圓形"});
             this.comboBox1.Location = new System.Drawing.Point(10, 44);
             this.comboBox1.Name = "comboBox1";
             this.comboBox1.Size = new System.Drawing.Size(71, 20);
