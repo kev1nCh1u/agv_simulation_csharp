@@ -37,7 +37,7 @@ namespace agv_simulation
                 case 1:
                     // S path
                     // Console.WriteLine("S");
-                    waypoints = GenS(new PointF(pictureBox1.Height / 2, 500), new PointF(pictureBox1.Height / 2, 50));
+                    waypoints = GenWave(pictureBox1.Width, pictureBox1.Height, 100);
                     carPoint = new PointF(pictureBox1.Width / 2 - 100, pictureBox1.Height - 100);
                     break;
                 case 2:
@@ -79,16 +79,15 @@ namespace agv_simulation
             return points;
         }
 
-        PointF[] GenS(PointF startPoint, PointF endPoint, int wave = 40)
+        PointF[] GenWave(int width, int height, int wave = 40)
         {
-            int num = 450;
+            int side = 50;
+            int num = height - side * 2;
             PointF[] points = new PointF[num];
             for (int i = 0; i < num; i++)
             {
-
                 points[i].X = (float)pictureBox1.Width / 2 + (float)Math.Sin(i / (float)pictureBox1.Height * 2 * (Math.PI)) * wave;
-                points[i].Y = (float)500 - i;
-
+                points[i].Y = (float)height - side - i;
             }
             return points;
         }
