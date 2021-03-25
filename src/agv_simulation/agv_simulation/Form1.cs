@@ -34,12 +34,6 @@ namespace agv_simulation
             // Console.WriteLine(pathItem);
             switch (pathItem)
             {
-                case 0:
-                    // line path
-                    // Console.WriteLine("line");
-                    waypoints = GenLine(new PointF(pictureBox1.Height / 2, 500), new PointF(pictureBox1.Height / 2, 50));
-                    carPoint = new PointF(pictureBox1.Width / 2 - 100, pictureBox1.Height - 100);
-                    break;
                 case 1:
                     // S path
                     // Console.WriteLine("S");
@@ -61,7 +55,7 @@ namespace agv_simulation
                 default:
                     // line path
                     // Console.WriteLine("line");
-                    waypoints = GenLine(new PointF(pictureBox1.Height / 2, 500), new PointF(pictureBox1.Height / 2, 50));
+                    waypoints = GenLine(pictureBox1.Width, pictureBox1.Height);
                     carPoint = new PointF(pictureBox1.Width / 2 - 100, pictureBox1.Height - 100);
                     break;
             }
@@ -72,16 +66,15 @@ namespace agv_simulation
             carHis = new List<PointF>();
         }
 
-        PointF[] GenLine(PointF startPoint, PointF endPoint)
+        PointF[] GenLine(int width, int height)
         {
-            int num = 450;
+            int side = 50;
+            int num = height - side * 2;
             PointF[] points = new PointF[num];
-            for (int i = 0; i < num; i++)
+            for (int i = height - side, j = 0; i > side; i--, j++)
             {
-
-                points[i].X = (float)pictureBox1.Width / 2;
-                points[i].Y = (float)500 - i;
-
+                points[j].X = (float)width / 2;
+                points[j].Y = (float)i;
             }
             return points;
         }
