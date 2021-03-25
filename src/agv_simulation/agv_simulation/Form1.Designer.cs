@@ -63,6 +63,8 @@
             this.trackBar8 = new System.Windows.Forms.TrackBar();
             this.comboBox1 = new System.Windows.Forms.ComboBox();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.label23 = new System.Windows.Forms.Label();
+            this.label22 = new System.Windows.Forms.Label();
             this.label21 = new System.Windows.Forms.Label();
             this.label20 = new System.Windows.Forms.Label();
             this.label19 = new System.Windows.Forms.Label();
@@ -390,7 +392,7 @@
             this.trackBar1.Size = new System.Drawing.Size(228, 45);
             this.trackBar1.TabIndex = 3;
             this.trackBar1.TickFrequency = 20;
-            this.trackBar1.Value = 100;
+            this.trackBar1.Value = 30;
             // 
             // trackBar8
             // 
@@ -405,19 +407,20 @@
             // 
             this.comboBox1.FormattingEnabled = true;
             this.comboBox1.Items.AddRange(new object[] {
-            "直線",
-            "S型",
-            "方形",
-            "圓形"});
+            "Line",
+            "Wave",
+            "Square",
+            "Circle"});
             this.comboBox1.Location = new System.Drawing.Point(10, 44);
             this.comboBox1.Name = "comboBox1";
             this.comboBox1.Size = new System.Drawing.Size(71, 20);
             this.comboBox1.TabIndex = 3;
-            this.comboBox1.Text = "直線";
             this.comboBox1.SelectedIndexChanged += new System.EventHandler(this.PathChange);
             // 
             // groupBox3
             // 
+            this.groupBox3.Controls.Add(this.label23);
+            this.groupBox3.Controls.Add(this.label22);
             this.groupBox3.Controls.Add(this.label21);
             this.groupBox3.Controls.Add(this.label20);
             this.groupBox3.Controls.Add(this.label19);
@@ -431,6 +434,24 @@
             this.groupBox3.TabIndex = 1;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "setting";
+            // 
+            // label23
+            // 
+            this.label23.AutoSize = true;
+            this.label23.Location = new System.Drawing.Point(115, 78);
+            this.label23.Name = "label23";
+            this.label23.Size = new System.Drawing.Size(39, 12);
+            this.label23.TabIndex = 30;
+            this.label23.Text = "label23";
+            // 
+            // label22
+            // 
+            this.label22.AutoSize = true;
+            this.label22.Location = new System.Drawing.Point(17, 78);
+            this.label22.Name = "label22";
+            this.label22.Size = new System.Drawing.Size(61, 12);
+            this.label22.TabIndex = 31;
+            this.label22.Text = "Car Length:";
             // 
             // label21
             // 
@@ -463,35 +484,34 @@
             // 
             this.comboBox3.FormattingEnabled = true;
             this.comboBox3.Items.AddRange(new object[] {
-            "路徑",
-            "半徑"});
+            "Closest",
+            "Radius"});
             this.comboBox3.Location = new System.Drawing.Point(174, 44);
             this.comboBox3.Name = "comboBox3";
             this.comboBox3.Size = new System.Drawing.Size(71, 20);
             this.comboBox3.TabIndex = 5;
-            this.comboBox3.Text = "路徑";
             // 
             // comboBox2
             // 
             this.comboBox2.FormattingEnabled = true;
             this.comboBox2.Items.AddRange(new object[] {
-            "point",
-            "差車正向",
-            "差車逆向"});
+            "Point Car",
+            "Forklift Front",
+            "Forklift Reverse"});
             this.comboBox2.Location = new System.Drawing.Point(92, 44);
             this.comboBox2.Name = "comboBox2";
             this.comboBox2.Size = new System.Drawing.Size(71, 20);
             this.comboBox2.TabIndex = 4;
-            this.comboBox2.Text = "point";
             // 
             // trackBar10
             // 
-            this.trackBar10.Location = new System.Drawing.Point(15, 92);
+            this.trackBar10.Location = new System.Drawing.Point(15, 93);
             this.trackBar10.Maximum = 100;
             this.trackBar10.Name = "trackBar10";
             this.trackBar10.Size = new System.Drawing.Size(228, 45);
             this.trackBar10.TabIndex = 30;
             this.trackBar10.TickFrequency = 10;
+            this.trackBar10.Value = 30;
             // 
             // Form1
             // 
@@ -565,6 +585,8 @@
         private System.Windows.Forms.ComboBox comboBox3;
         private System.Windows.Forms.ComboBox comboBox2;
         private System.Windows.Forms.TrackBar trackBar10;
+        private System.Windows.Forms.Label label22;
+        private System.Windows.Forms.Label label23;
     }
 }
 
