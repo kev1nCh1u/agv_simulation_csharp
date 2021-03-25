@@ -43,7 +43,7 @@ namespace agv_simulation
                 case 2:
                     // square path
                     // Console.WriteLine("square");
-                    waypoints = GenSquare();
+                    waypoints = GenSquare(pictureBox1.Width, pictureBox1.Height);
                     carPoint = new PointF((float)pictureBox1.Width / 2 - 200, (float)450);
                     break;
                 case 3:
@@ -92,51 +92,40 @@ namespace agv_simulation
             return points;
         }
 
-        PointF[] GenSquare()
+        PointF[] GenSquare(int width, int height)
         {
-            int num = 400;
+            int side = 50, distance = 80;
+            int num = height - side * 2;
             List<PointF> points = new List<PointF>();
-            PointF point = new PointF();
-            PointF pointLast = new PointF((float)pictureBox1.Width / 2 - 200, (float)450);
+            PointF point = new PointF((float)side, (float)height - side);
 
             for (int i = 0; i < 3; i++)
             {
                 for (int j = 0; j < num; j++)
                 {
-                    point.X = pointLast.X;
-                    point.Y = pointLast.Y - j;
+                    point.Y = point.Y - 1;
                     points.Add(point);
                 }
-                pointLast = point;
-                num -= 80;
+                num -= distance;
 
                 for (int j = 0; j < num; j++)
                 {
-
-                    point.X = pointLast.X + j;
-                    point.Y = pointLast.Y;
+                    point.X = point.X + 1;
                     points.Add(point);
                 }
-                pointLast = point;
 
                 for (int j = 0; j < num; j++)
                 {
-
-                    point.X = pointLast.X;
-                    point.Y = pointLast.Y + j;
+                    point.Y = point.Y + 1;
                     points.Add(point);
                 }
-                pointLast = point;
-                num -= 80;
+                num -= distance;
 
                 for (int j = 0; j < num; j++)
                 {
-                    point.X = pointLast.X - j;
-                    point.Y = pointLast.Y;
+                    point.X = point.X - 1;
                     points.Add(point);
                 }
-                pointLast = point;
-                
             }
 
             return points.ToArray();
