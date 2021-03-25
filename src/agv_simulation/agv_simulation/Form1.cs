@@ -44,12 +44,12 @@ namespace agv_simulation
                     // square path
                     // Console.WriteLine("square");
                     waypoints = GenSquare(pictureBox1.Width, pictureBox1.Height);
-                    carPoint = new PointF((float)pictureBox1.Width / 2 - 200, (float)450);
+                    carPoint = new PointF((float)50, (float)pictureBox1.Height - 50);
                     break;
                 case 3:
                     // GenCircle path
                     // Console.WriteLine("GenCircle");
-                    waypoints = GenCircle();
+                    waypoints = GenCircle(pictureBox1.Width, pictureBox1.Height);
                     carPoint = new PointF((float)pictureBox1.Width / 2 - 250, (float)350);
                     break;
                 default:
@@ -94,10 +94,10 @@ namespace agv_simulation
 
         PointF[] GenSquare(int width, int height)
         {
-            int side = 50, distance = 80;
+            int side = 100, distance = 150;
             int num = height - side * 2;
+            PointF point = new PointF((float)distance/2 + side, (float)height - side);
             List<PointF> points = new List<PointF>();
-            PointF point = new PointF((float)side, (float)height - side);
 
             for (int i = 0; i < 3; i++)
             {
@@ -131,24 +131,30 @@ namespace agv_simulation
             return points.ToArray();
         }
 
-        PointF[] GenCircle()
+        PointF[] GenCircle(int width, int height)
         {
-            PointF point = new PointF();
-            PointF centerPoint = new PointF(pictureBox1.Width / 2, pictureBox1.Height / 2);
-            PointF startPoint = new PointF((float)pictureBox1.Width / 2 - 200, (float)450);
-            List<PointF> points = new List<PointF>();
+            PointF centerPoint = new PointF(width / 2, height / 2);
+            PointF startPoint = new PointF((float)width / 2 - 200, (float)450);
             float radius = (float)Pythagorean(centerPoint.X - startPoint.X, centerPoint.Y - startPoint.Y);
             
-            while(radius > 0)
+            PointF point = new PointF();
+            List<PointF> points = new List<PointF>();
+            
+            float perNum = (float)0.01; //解析度
+            float distance = 18;
+            float endRadius = (float)50; //停止點
+
+            while(radius > endRadius)
             {
-                float perNum = (float)0.05;
+                
                 for (float i = (float)-3.14, j = 0; i <= (float)3.14; i=i+perNum, j++)
                 {
                     point.X = (int)(centerPoint.X + radius * (float)Math.Cos((float)i));
                     point.Y = (int)(centerPoint.Y + radius * (float)Math.Sin((float)i));
                     points.Add(point);
-                    radius = radius - perNum*14;
-                    if(radius < 0)
+
+                    radius = radius - perNum * distance;
+                    if(radius < endRadius)
                         break;
                 }
             }
@@ -167,7 +173,7 @@ namespace agv_simulation
             Graphics g = Graphics.FromImage(bmp);
             //Graphics g = pictureBox1.CreateGraphics();
 
-            Pen penColorRed = new Pen(Color.Red, 4);
+            Pen penColorRed = new Pen(Color.Red, 3);
             Pen penColorGray = new Pen(Color.Gray, 1);
             Pen penColorOrg = new Pen(Color.Orange, 1);
             Pen penColorBlu = new Pen(Color.Blue, 1);
