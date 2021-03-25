@@ -12,20 +12,18 @@ namespace agv_simulation
 {
     public partial class Form1 : Form
     {
-
-        PointF carPoint;
-        double carHead, wheelHead, accuracy;
-        int closeNum, frontNum, frontDis, basicSpeed, carLength;
-        PointF[] waypoints, circlePoints;
-        List<PointF> carHis;
-
         public struct ErrType
         {
             public double kp, ki, kd;
             public double err, errlast, errsum;
         }
 
-        ErrType errDis, errSita;
+        PointF g_carPoint;
+        double g_carHead, g_wheelHead, g_accuracy;
+        int g_closeNum, g_frontNum, g_frontDis, g_basicSpeed, g_carLength;
+        PointF[] g_waypoints, g_circlePoints;
+        List<PointF> g_carHis;
+        ErrType g_errDis, g_errSita;
         
 
         void ReStart()
@@ -37,33 +35,33 @@ namespace agv_simulation
                 case 1:
                     // S path
                     // Console.WriteLine("S");
-                    waypoints = GenWave(pictureBox1.Width, pictureBox1.Height, 100);
-                    carPoint = new PointF(pictureBox1.Width / 2 - 100, pictureBox1.Height - 100);
+                    g_waypoints = GenWave(pictureBox1.Width, pictureBox1.Height, 100);
+                    g_carPoint = new PointF(pictureBox1.Width / 2 - 100, pictureBox1.Height - 100);
                     break;
                 case 2:
                     // square path
                     // Console.WriteLine("square");
-                    waypoints = GenSquare(pictureBox1.Width, pictureBox1.Height);
-                    carPoint = new PointF((float)50, (float)pictureBox1.Height - 50);
+                    g_waypoints = GenSquare(pictureBox1.Width, pictureBox1.Height);
+                    g_carPoint = new PointF((float)50, (float)pictureBox1.Height - 50);
                     break;
                 case 3:
                     // GenCircle path
                     // Console.WriteLine("GenCircle");
-                    waypoints = GenCircle(pictureBox1.Width, pictureBox1.Height);
-                    carPoint = new PointF((float)pictureBox1.Width / 2 - 250, (float)350);
+                    g_waypoints = GenCircle(pictureBox1.Width, pictureBox1.Height);
+                    g_carPoint = new PointF((float)pictureBox1.Width / 2 - 250, (float)350);
                     break;
                 default:
                     // line path
                     // Console.WriteLine("line");
-                    waypoints = GenLine(pictureBox1.Width, pictureBox1.Height);
-                    carPoint = new PointF(pictureBox1.Width / 2 - 100, pictureBox1.Height - 100);
+                    g_waypoints = GenLine(pictureBox1.Width, pictureBox1.Height);
+                    g_carPoint = new PointF(pictureBox1.Width / 2 - 100, pictureBox1.Height - 100);
                     break;
             }
 
-            carHead = 1.57;
-            wheelHead = carHead;
-            frontNum = 0;
-            carHis = new List<PointF>();
+            g_carHead = 1.57;
+            g_wheelHead = g_carHead;
+            g_frontNum = 0;
+            g_carHis = new List<PointF>();
         }
 
         PointF[] GenLine(int width, int height)
@@ -186,14 +184,14 @@ namespace agv_simulation
             Brush brushColorOrange = new SolidBrush(Color.Orange);
 
             // ============================== 路徑 =============================
-            g.DrawCurve(penColorRed, waypoints);
+            g.DrawCurve(penColorRed, g_waypoints);
 
             // ============================== 歷史軌跡 =============================
-            if (carHis.Count > 1)
-                g.DrawCurve(penColorBlu, carHis.ToArray());
+            if (g_carHis.Count > 1)
+                g.DrawCurve(penColorBlu, g_carHis.ToArray());
             
             // ============================== 最近點 =============================
-            g.FillEllipse(brushColorBlue, waypoints[closeNum].X - 5,waypoints[closeNum].Y - 5, 10, 10);
+            g.FillEllipse(brushColorBlue, g_waypoints[g_closeNum].X - 5, g_waypoints[g_closeNum].Y - 5, 10, 10);
             
             
             if(comboBox2.SelectedIndex == 1 || comboBox2.SelectedIndex == 2)
@@ -202,44 +200,44 @@ namespace agv_simulation
                 PointF wheelPoint = new PointF();
                 if(comboBox2.SelectedIndex == 1)
                 {
-                    wheelPoint = new PointF(carPoint.X + carLength * (float)Math.Cos(carHead), carPoint.Y - carLength * (float)Math.Sin(carHead));
+                    wheelPoint = new PointF(g_carPoint.X + g_carLength * (float)Math.Cos(g_carHead), g_carPoint.Y - g_carLength * (float)Math.Sin(g_carHead));
                 }
                 else if(comboBox2.SelectedIndex == 2)
                 {
-                    wheelPoint = new PointF(carPoint.X - carLength * (float)Math.Cos(carHead), carPoint.Y + carLength * (float)Math.Sin(carHead));
+                    wheelPoint = new PointF(g_carPoint.X - g_carLength * (float)Math.Cos(g_carHead), g_carPoint.Y + g_carLength * (float)Math.Sin(g_carHead));
                 }
 
                 // ============================ 輔助輪位置 =====================================
-                PointF carPointRight = new PointF(carPoint.X + 30 * (float)Math.Cos(carHead + 1.57), carPoint.Y - 30 * (float)Math.Sin(carHead + 1.57));
-                PointF carPointLift = new PointF(carPoint.X + 30 * (float)Math.Cos(carHead - 1.57), carPoint.Y - 30 * (float)Math.Sin(carHead - 1.57));
+                PointF carPointRight = new PointF(g_carPoint.X + 30 * (float)Math.Cos(g_carHead + 1.57), g_carPoint.Y - 30 * (float)Math.Sin(g_carHead + 1.57));
+                PointF carPointLift = new PointF(g_carPoint.X + 30 * (float)Math.Cos(g_carHead - 1.57), g_carPoint.Y - 30 * (float)Math.Sin(g_carHead - 1.57));
                 
                 // ============================ 轉向輪 =====================================
-                g.DrawLine(penColorThinBlack, wheelPoint.X, wheelPoint.Y, carPoint.X, carPoint.Y);
-                g.DrawLine(penColorBigBlack, wheelPoint.X, wheelPoint.Y, wheelPoint.X + 10 * (float)Math.Cos(wheelHead), wheelPoint.Y - 10 * (float)Math.Sin(wheelHead));
-                g.DrawLine(penColorBigBlack, wheelPoint.X, wheelPoint.Y, wheelPoint.X - 10 * (float)Math.Cos(wheelHead), wheelPoint.Y + 10 * (float)Math.Sin(wheelHead));
+                g.DrawLine(penColorThinBlack, wheelPoint.X, wheelPoint.Y, g_carPoint.X, g_carPoint.Y);
+                g.DrawLine(penColorBigBlack, wheelPoint.X, wheelPoint.Y, wheelPoint.X + 10 * (float)Math.Cos(g_wheelHead), wheelPoint.Y - 10 * (float)Math.Sin(g_wheelHead));
+                g.DrawLine(penColorBigBlack, wheelPoint.X, wheelPoint.Y, wheelPoint.X - 10 * (float)Math.Cos(g_wheelHead), wheelPoint.Y + 10 * (float)Math.Sin(g_wheelHead));
 
                 // ============================ 輔助輪右 =====================================
-                g.DrawLine(penColorThinBlack, carPointRight.X, carPointRight.Y, carPoint.X, carPoint.Y);
-                g.DrawLine(penColorBigBlack, carPointRight.X, carPointRight.Y, carPointRight.X + 10 * (float)Math.Cos(carHead), carPointRight.Y - 10 * (float)Math.Sin(carHead));
-                g.DrawLine(penColorBigBlack, carPointRight.X, carPointRight.Y, carPointRight.X - 10 * (float)Math.Cos(carHead), carPointRight.Y + 10 * (float)Math.Sin(carHead));
+                g.DrawLine(penColorThinBlack, carPointRight.X, carPointRight.Y, g_carPoint.X, g_carPoint.Y);
+                g.DrawLine(penColorBigBlack, carPointRight.X, carPointRight.Y, carPointRight.X + 10 * (float)Math.Cos(g_carHead), carPointRight.Y - 10 * (float)Math.Sin(g_carHead));
+                g.DrawLine(penColorBigBlack, carPointRight.X, carPointRight.Y, carPointRight.X - 10 * (float)Math.Cos(g_carHead), carPointRight.Y + 10 * (float)Math.Sin(g_carHead));
 
                 // ============================ 輔助輪左 =====================================
-                g.DrawLine(penColorThinBlack, carPointLift.X, carPointLift.Y, carPoint.X, carPoint.Y);
-                g.DrawLine(penColorBigBlack, carPointLift.X, carPointLift.Y, carPointLift.X + 10 * (float)Math.Cos(carHead), carPointLift.Y - 10 * (float)Math.Sin(carHead));
-                g.DrawLine(penColorBigBlack, carPointLift.X, carPointLift.Y, carPointLift.X - 10 * (float)Math.Cos(carHead), carPointLift.Y + 10 * (float)Math.Sin(carHead));
+                g.DrawLine(penColorThinBlack, carPointLift.X, carPointLift.Y, g_carPoint.X, g_carPoint.Y);
+                g.DrawLine(penColorBigBlack, carPointLift.X, carPointLift.Y, carPointLift.X + 10 * (float)Math.Cos(g_carHead), carPointLift.Y - 10 * (float)Math.Sin(g_carHead));
+                g.DrawLine(penColorBigBlack, carPointLift.X, carPointLift.Y, carPointLift.X - 10 * (float)Math.Cos(g_carHead), carPointLift.Y + 10 * (float)Math.Sin(g_carHead));
             }
             
             // ============================== 前視距離圓圈 =============================
             if(comboBox3.SelectedIndex == 1)
-                g.DrawCurve(penColorGray, circlePoints);
+                g.DrawCurve(penColorGray, g_circlePoints);
 
             // ============================== 前視距離 =============================
-            g.DrawLine(penColorOrg, carPoint.X, carPoint.Y, waypoints[frontNum].X, waypoints[frontNum].Y);
-            g.FillEllipse(brushColorOrange, waypoints[frontNum].X - 5, waypoints[frontNum].Y - 5, 10, 10);
+            g.DrawLine(penColorOrg, g_carPoint.X, g_carPoint.Y, g_waypoints[g_frontNum].X, g_waypoints[g_frontNum].Y);
+            g.FillEllipse(brushColorOrange, g_waypoints[g_frontNum].X - 5, g_waypoints[g_frontNum].Y - 5, 10, 10);
 
             // ============================== 車中心 =============================
-            g.DrawLine(penColorBlack, carPoint.X, carPoint.Y, carPoint.X + 15 * (float)Math.Cos(carHead), carPoint.Y - 15 * (float)Math.Sin(carHead));
-            g.FillEllipse(brushColorBlack, carPoint.X - 5, carPoint.Y - 5, 10, 10);
+            g.DrawLine(penColorBlack, g_carPoint.X, g_carPoint.Y, g_carPoint.X + 15 * (float)Math.Cos(g_carHead), g_carPoint.Y - 15 * (float)Math.Sin(g_carHead));
+            g.FillEllipse(brushColorBlack, g_carPoint.X - 5, g_carPoint.Y - 5, 10, 10);
         }
 
         double Pythagorean(float x, float y)
@@ -334,6 +332,18 @@ namespace agv_simulation
 
         void PurePursuit()
         {
+            double errX = 0, errY = 0;
+            
+            errX = g_waypoints[g_frontNum].X - g_carPoint.X;
+            errY = -(g_waypoints[g_frontNum].Y - g_carPoint.Y);
+
+            g_errDis.err = Pythagorean((float)errX, (float)errY);
+            g_errSita.err = g_carHead - Math.Atan2(errY, errX);
+            if (g_errSita.err > Math.PI)
+                g_errSita.err = g_errSita.err - 2 * Math.PI;
+            else if (g_errSita.err < -Math.PI)
+                g_errSita.err = g_errSita.err + 2 * Math.PI;
+            // Console.WriteLine(errX + "  " + errY + "  " + g_errDis.err + "  " + g_errSita.err); //debug
 
         }
 
@@ -343,79 +353,118 @@ namespace agv_simulation
             return ans;
         }
 
-        private void PathChange(object sender, EventArgs e)
+        Tuple<double, double> Kinematics(int basicSpeed)
         {
-            ReStart();
-        }
-
-        void Kinematics(int basicSpeed)
-        {
-            double errX = 0, errY = 0;
             double carV = 0, carW = 0;
 
-            errX = waypoints[frontNum].X - carPoint.X;
-            errY = -(waypoints[frontNum].Y - carPoint.Y);
-
-            errDis.err = Pythagorean((float)errX, (float)errY);
-            errSita.err = carHead - Math.Atan2(errY, errX);
-            if (errSita.err > Math.PI)
-                errSita.err = errSita.err - 2 * Math.PI;
-            else if (errSita.err < -Math.PI)
-                errSita.err = errSita.err + 2 * Math.PI;
-            // Console.WriteLine(errX + "  " + errY + "  " + errDis.err + "  " + errSita.err); //debug
-
-            carV = PidFuc(errDis.kp, errDis.ki, errDis.kd, errDis.err, errDis.errsum, errDis.errlast) + basicSpeed;
-            carW = PidFuc(errSita.kp, errSita.ki, errSita.kd, errSita.err, errSita.errsum, errSita.errlast);
-            errDis.errlast = errDis.err;
-            errDis.errsum += errDis.err;
-            errSita.errlast = errSita.err;
-            errSita.errsum += errSita.err;
+            carV = PidFuc(g_errDis.kp, g_errDis.ki, g_errDis.kd, g_errDis.err, g_errDis.errsum, g_errDis.errlast) + basicSpeed;
+            carW = PidFuc(g_errSita.kp, g_errSita.ki, g_errSita.kd, g_errSita.err, g_errSita.errsum, g_errSita.errlast);
+            g_errDis.errlast = g_errDis.err;
+            g_errDis.errsum += g_errDis.err;
+            g_errSita.errlast = g_errSita.err;
+            g_errSita.errsum += g_errSita.err;
             // Console.WriteLine("carhead:" + carHead + "  atan:" + Math.Atan2(errY, errX) + "  errSita:" + errSita.err + "  carV:" + carV + "  carW:" + carW); //debug
-
-            if(comboBox2.SelectedIndex == 0)
-                MovePointCar(carV, carW);
-            else if(comboBox2.SelectedIndex == 1)
-                MoveForkliftFront(carV, carW);
-            else if(comboBox2.SelectedIndex == 2)
-                MoveForkliftReverse(carV, carW);
-
+        
+            return Tuple.Create(carV, carW);
         }
 
         void MovePointCar(double carV, double carW)
         {
-            carHis.Add(carPoint);
+            g_carHis.Add(g_carPoint);
 
             if (carV > 30)
                 carV = 30;
 
-            carPoint.X += (float)(carV * Math.Cos(carHead));
-            carPoint.Y -= (float)(carV * Math.Sin(carHead));
-            carHead -= carW;
+            g_carPoint.X += (float)(carV * Math.Cos(g_carHead));
+            g_carPoint.Y -= (float)(carV * Math.Sin(g_carHead));
+            g_carHead -= carW;
         }
 
         void MoveForkliftFront(double carV, double carW)
         {
-            carHis.Add(carPoint);
+            g_carHis.Add(g_carPoint);
 
             if (carV > 30)
                 carV = 30;
 
-            carPoint.X += (float)(carV * Math.Cos(carHead));
-            carPoint.Y -= (float)(carV * Math.Sin(carHead));
-            carHead -= carW;
-            wheelHead = carHead + Math.Atan(carW * -1 * carLength / carV);
+            g_carPoint.X += (float)(carV * Math.Cos(g_carHead));
+            g_carPoint.Y -= (float)(carV * Math.Sin(g_carHead));
+            g_carHead -= carW;
+            g_wheelHead = g_carHead + Math.Atan(carW * -1 * g_carLength / carV);
         }
+
         void MoveForkliftReverse(double carV, double carW)
         {
-            carHis.Add(carPoint);
+            g_carHis.Add(g_carPoint);
 
             if (carV > 30)
                 carV = 30;
 
-            carPoint.X += (float)(carV * Math.Cos(carHead));
-            carPoint.Y -= (float)(carV * Math.Sin(carHead));
-            carHead -= carW;
-            wheelHead = carHead - Math.Atan(carW * -1 * carLength / carV);
+            g_carPoint.X += (float)(carV * Math.Cos(g_carHead));
+            g_carPoint.Y -= (float)(carV * Math.Sin(g_carHead));
+            g_carHead -= carW;
+            g_wheelHead = g_carHead - Math.Atan(carW * -1 * g_carLength / carV);
+        }
+
+        void GetControlInfo()
+        {
+            g_frontDis = trackBar1.Value;
+            g_basicSpeed = trackBar2.Value;
+            g_accuracy = trackBar3.Value / (float)10;
+            g_errDis.kp = trackBar4.Value / (float)100;
+            g_errDis.ki = trackBar5.Value / (float)100;
+            g_errDis.kd = trackBar6.Value / (float)100;
+            g_errSita.kp = trackBar7.Value / (float)100;
+            g_errSita.ki = trackBar8.Value / (float)100;
+            g_errSita.kd = trackBar9.Value / (float)100;
+            g_carLength = trackBar10.Value;
+
+            label10.Text = Convert.ToString(g_frontDis);
+            label11.Text = Convert.ToString(g_basicSpeed);
+            label12.Text = Convert.ToString(g_accuracy);
+            label13.Text = Convert.ToString(g_errDis.kp);
+            label14.Text = Convert.ToString(g_errDis.ki);
+            label15.Text = Convert.ToString(g_errDis.kd);
+            label16.Text = Convert.ToString(g_errSita.kp);
+            label17.Text = Convert.ToString(g_errSita.ki);
+            label18.Text = Convert.ToString(g_errSita.kd);
+            label23.Text = Convert.ToString(g_carLength);
+        }
+
+        private void timer1_Tick(object sender, EventArgs e)
+        {
+            GetControlInfo();
+
+            // Console.WriteLine("timer1 tick");
+            if(comboBox3.SelectedIndex == 0)
+            {
+                g_closeNum = FindClosestPoint(g_carPoint, g_waypoints);
+                g_frontNum = FindFrontPoint(g_waypoints[g_closeNum], g_waypoints, g_closeNum, g_frontDis, g_frontNum);
+            }
+            else if(comboBox3.SelectedIndex == 1)
+            {
+                g_closeNum = FindClosestPoint(g_carPoint, g_waypoints);
+                g_circlePoints = GenCarCircle(g_carPoint, g_waypoints, g_frontDis);
+                g_frontNum = FindRadiusPoint(g_circlePoints, g_waypoints, g_frontNum);
+            }
+
+            PurePursuit();
+            var carVW = Kinematics(g_basicSpeed);
+            if(comboBox2.SelectedIndex == 0)
+                MovePointCar(carVW.Item1, carVW.Item2);
+            else if(comboBox2.SelectedIndex == 1)
+                MoveForkliftFront(carVW.Item1, carVW.Item2);
+            else if(comboBox2.SelectedIndex == 2)
+                MoveForkliftReverse(carVW.Item1, carVW.Item2);
+
+            g_closeNum = FindClosestPoint(g_carPoint, g_waypoints);
+
+            DrawOnPic();
+
+            if (g_errDis.err < g_accuracy && g_errSita.err < g_accuracy)
+            {
+                ReStart();
+            }
         }
 
         public Form1()
@@ -429,60 +478,12 @@ namespace agv_simulation
             ReStart();
         }
 
-        void GetControlInfo()
-        {
-            frontDis = trackBar1.Value;
-            basicSpeed = trackBar2.Value;
-            accuracy = trackBar3.Value / (float)10;
-            errDis.kp = trackBar4.Value / (float)100;
-            errDis.ki = trackBar5.Value / (float)100;
-            errDis.kd = trackBar6.Value / (float)100;
-            errSita.kp = trackBar7.Value / (float)100;
-            errSita.ki = trackBar8.Value / (float)100;
-            errSita.kd = trackBar9.Value / (float)100;
-            carLength = trackBar10.Value;
-
-            label10.Text = Convert.ToString(frontDis);
-            label11.Text = Convert.ToString(basicSpeed);
-            label12.Text = Convert.ToString(accuracy);
-            label13.Text = Convert.ToString(errDis.kp);
-            label14.Text = Convert.ToString(errDis.ki);
-            label15.Text = Convert.ToString(errDis.kd);
-            label16.Text = Convert.ToString(errSita.kp);
-            label17.Text = Convert.ToString(errSita.ki);
-            label18.Text = Convert.ToString(errSita.kd);
-            label23.Text = Convert.ToString(carLength);
-        }
-
-        private void timer1_Tick(object sender, EventArgs e)
-        {
-            GetControlInfo();
-
-            // Console.WriteLine("timer1 tick");
-            if(comboBox3.SelectedIndex == 0)
-            {
-                closeNum = FindClosestPoint(carPoint, waypoints);
-                frontNum = FindFrontPoint(waypoints[closeNum], waypoints, closeNum, frontDis, frontNum);
-            }
-            else if(comboBox3.SelectedIndex == 1)
-            {
-                closeNum = FindClosestPoint(carPoint, waypoints);
-                circlePoints = GenCarCircle(carPoint, waypoints, frontDis);
-                frontNum = FindRadiusPoint(circlePoints, waypoints, frontNum);
-            }
-
-            Kinematics(basicSpeed);
-            closeNum = FindClosestPoint(carPoint, waypoints);
-
-            DrawOnPic();
-
-            if (errDis.err < accuracy && errSita.err < accuracy)
-            {
-                ReStart();
-            }
-
-        }
         private void button1_Click(object sender, EventArgs e)
+        {
+            ReStart();
+        }
+
+        private void PathChange(object sender, EventArgs e)
         {
             ReStart();
         }
