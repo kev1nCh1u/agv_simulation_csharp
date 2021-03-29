@@ -22,7 +22,7 @@ namespace agv_simulation
         double g_carHead, g_wheelHead, g_accuracy;
         int g_closeNum, g_frontNum, g_frontDis, g_basicSpeed, g_carLength;
         PointF[] g_waypoints, g_circlePoints;
-        List<PointF> g_carHis;
+        List<PointF> g_carHistory;
         ErrType g_errDis, g_errSita;
         
 
@@ -61,7 +61,7 @@ namespace agv_simulation
             g_carHead = 1.57;
             g_wheelHead = g_carHead;
             g_frontNum = 0;
-            g_carHis = new List<PointF>();
+            g_carHistory = new List<PointF>();
         }
 
         PointF[] GenLine(int width, int height)
@@ -187,8 +187,8 @@ namespace agv_simulation
             g.DrawCurve(penColorRed, g_waypoints);
 
             // ============================== 歷史軌跡 =============================
-            if (g_carHis.Count > 1)
-                g.DrawCurve(penColorBlu, g_carHis.ToArray());
+            if (g_carHistory.Count > 1)
+                g.DrawCurve(penColorBlu, g_carHistory.ToArray());
             
             // ============================== 最近點 =============================
             g.FillEllipse(brushColorBlue, g_waypoints[g_closeNum].X - 5, g_waypoints[g_closeNum].Y - 5, 10, 10);
@@ -370,7 +370,7 @@ namespace agv_simulation
 
         void MovePointCar(double carV, double carW)
         {
-            g_carHis.Add(g_carPoint);
+            g_carHistory.Add(g_carPoint);
 
             if (carV > 30)
                 carV = 30;
@@ -382,7 +382,7 @@ namespace agv_simulation
 
         void MoveForkliftFront(double carV, double carW)
         {
-            g_carHis.Add(g_carPoint);
+            g_carHistory.Add(g_carPoint);
 
             if (carV > 30)
                 carV = 30;
@@ -395,7 +395,7 @@ namespace agv_simulation
 
         void MoveForkliftReverse(double carV, double carW)
         {
-            g_carHis.Add(g_carPoint);
+            g_carHistory.Add(g_carPoint);
 
             if (carV > 30)
                 carV = 30;
