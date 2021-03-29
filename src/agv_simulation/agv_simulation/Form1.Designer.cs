@@ -63,11 +63,14 @@
             this.trackBar8 = new System.Windows.Forms.TrackBar();
             this.comboBox1 = new System.Windows.Forms.ComboBox();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.label23 = new System.Windows.Forms.Label();
+            this.label22 = new System.Windows.Forms.Label();
             this.label21 = new System.Windows.Forms.Label();
             this.label20 = new System.Windows.Forms.Label();
             this.label19 = new System.Windows.Forms.Label();
             this.comboBox3 = new System.Windows.Forms.ComboBox();
             this.comboBox2 = new System.Windows.Forms.ComboBox();
+            this.trackBar10 = new System.Windows.Forms.TrackBar();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
@@ -81,13 +84,14 @@
             ((System.ComponentModel.ISupportInitialize)(this.trackBar1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.trackBar8)).BeginInit();
             this.groupBox3.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.trackBar10)).BeginInit();
             this.SuspendLayout();
             // 
             // pictureBox1
             // 
             this.pictureBox1.Location = new System.Drawing.Point(6, 13);
             this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(500, 583);
+            this.pictureBox1.Size = new System.Drawing.Size(628, 650);
             this.pictureBox1.TabIndex = 0;
             this.pictureBox1.TabStop = false;
             // 
@@ -101,7 +105,7 @@
             this.groupBox1.Controls.Add(this.pictureBox1);
             this.groupBox1.Location = new System.Drawing.Point(20, 12);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(510, 602);
+            this.groupBox1.Size = new System.Drawing.Size(640, 670);
             this.groupBox1.TabIndex = 1;
             this.groupBox1.TabStop = false;
             // 
@@ -135,7 +139,7 @@
             this.groupBox2.Controls.Add(this.trackBar2);
             this.groupBox2.Controls.Add(this.trackBar1);
             this.groupBox2.Controls.Add(this.trackBar8);
-            this.groupBox2.Location = new System.Drawing.Point(550, 94);
+            this.groupBox2.Location = new System.Drawing.Point(732, 162);
             this.groupBox2.Name = "groupBox2";
             this.groupBox2.Size = new System.Drawing.Size(260, 520);
             this.groupBox2.TabIndex = 2;
@@ -388,7 +392,7 @@
             this.trackBar1.Size = new System.Drawing.Size(228, 45);
             this.trackBar1.TabIndex = 3;
             this.trackBar1.TickFrequency = 20;
-            this.trackBar1.Value = 100;
+            this.trackBar1.Value = 30;
             // 
             // trackBar8
             // 
@@ -403,39 +407,60 @@
             // 
             this.comboBox1.FormattingEnabled = true;
             this.comboBox1.Items.AddRange(new object[] {
-            "直線",
-            "S型",
-            "方形"});
+            "Line",
+            "Wave",
+            "Square",
+            "Circle"});
             this.comboBox1.Location = new System.Drawing.Point(10, 44);
             this.comboBox1.Name = "comboBox1";
             this.comboBox1.Size = new System.Drawing.Size(71, 20);
             this.comboBox1.TabIndex = 3;
-            this.comboBox1.Text = "直線";
             this.comboBox1.SelectedIndexChanged += new System.EventHandler(this.PathChange);
             // 
             // groupBox3
             // 
+            this.groupBox3.Controls.Add(this.label23);
+            this.groupBox3.Controls.Add(this.label22);
             this.groupBox3.Controls.Add(this.label21);
             this.groupBox3.Controls.Add(this.label20);
             this.groupBox3.Controls.Add(this.label19);
             this.groupBox3.Controls.Add(this.comboBox3);
             this.groupBox3.Controls.Add(this.comboBox2);
             this.groupBox3.Controls.Add(this.comboBox1);
-            this.groupBox3.Location = new System.Drawing.Point(550, 12);
+            this.groupBox3.Controls.Add(this.trackBar10);
+            this.groupBox3.Location = new System.Drawing.Point(732, 12);
             this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(260, 76);
+            this.groupBox3.Size = new System.Drawing.Size(260, 144);
             this.groupBox3.TabIndex = 1;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "setting";
             // 
+            // label23
+            // 
+            this.label23.AutoSize = true;
+            this.label23.Location = new System.Drawing.Point(115, 78);
+            this.label23.Name = "label23";
+            this.label23.Size = new System.Drawing.Size(39, 12);
+            this.label23.TabIndex = 30;
+            this.label23.Text = "label23";
+            // 
+            // label22
+            // 
+            this.label22.AutoSize = true;
+            this.label22.Location = new System.Drawing.Point(17, 78);
+            this.label22.Name = "label22";
+            this.label22.Size = new System.Drawing.Size(61, 12);
+            this.label22.TabIndex = 31;
+            this.label22.Text = "Car Length:";
+            // 
             // label21
             // 
             this.label21.AutoSize = true;
-            this.label21.Location = new System.Drawing.Point(196, 25);
+            this.label21.Location = new System.Drawing.Point(182, 25);
             this.label21.Name = "label21";
-            this.label21.Size = new System.Drawing.Size(22, 12);
+            this.label21.Size = new System.Drawing.Size(55, 12);
             this.label21.TabIndex = 30;
-            this.label21.Text = "nan";
+            this.label21.Text = "Pure Pursit";
             // 
             // label20
             // 
@@ -458,6 +483,9 @@
             // comboBox3
             // 
             this.comboBox3.FormattingEnabled = true;
+            this.comboBox3.Items.AddRange(new object[] {
+            "Closest",
+            "Radius"});
             this.comboBox3.Location = new System.Drawing.Point(174, 44);
             this.comboBox3.Name = "comboBox3";
             this.comboBox3.Size = new System.Drawing.Size(71, 20);
@@ -467,25 +495,34 @@
             // 
             this.comboBox2.FormattingEnabled = true;
             this.comboBox2.Items.AddRange(new object[] {
-            "point",
-            "差車正向",
-            "差車逆向"});
+            "Point Car",
+            "Forklift Front",
+            "Forklift Reverse"});
             this.comboBox2.Location = new System.Drawing.Point(92, 44);
             this.comboBox2.Name = "comboBox2";
             this.comboBox2.Size = new System.Drawing.Size(71, 20);
             this.comboBox2.TabIndex = 4;
-            this.comboBox2.Text = "point";
+            // 
+            // trackBar10
+            // 
+            this.trackBar10.Location = new System.Drawing.Point(15, 93);
+            this.trackBar10.Maximum = 100;
+            this.trackBar10.Name = "trackBar10";
+            this.trackBar10.Size = new System.Drawing.Size(228, 45);
+            this.trackBar10.TabIndex = 30;
+            this.trackBar10.TickFrequency = 10;
+            this.trackBar10.Value = 30;
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1070, 626);
+            this.ClientSize = new System.Drawing.Size(1004, 691);
             this.Controls.Add(this.groupBox3);
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.groupBox1);
             this.Name = "Form1";
-            this.Text = "Form1";
+            this.Text = "agv_simulation";
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.groupBox1.ResumeLayout(false);
             this.groupBox2.ResumeLayout(false);
@@ -501,6 +538,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.trackBar8)).EndInit();
             this.groupBox3.ResumeLayout(false);
             this.groupBox3.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.trackBar10)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -546,6 +584,9 @@
         private System.Windows.Forms.Label label19;
         private System.Windows.Forms.ComboBox comboBox3;
         private System.Windows.Forms.ComboBox comboBox2;
+        private System.Windows.Forms.TrackBar trackBar10;
+        private System.Windows.Forms.Label label22;
+        private System.Windows.Forms.Label label23;
     }
 }
 
