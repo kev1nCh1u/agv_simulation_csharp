@@ -301,16 +301,14 @@ namespace agv_simulation
         {
             double errCalc; //誤差計算暫存
             double err = 999999; //假設誤差極大
-            //PointF point = compare[compare.Length - 1];
-            int placeNum = compare.Length - 1;
+            int placeNum = compare.Length - 1; //path index
             // Console.WriteLine("i:" + i); //debug
             for (int i = closeNum; i < compare.Length; i++)
             {
-                errCalc = Pythagorean(basic.X - compare[i].X, basic.Y - compare[i].Y);
-                if ((errCalc < err) && (errCalc > frontDis) && (i >= frontNum))
+                errCalc = Pythagorean(basic.X - compare[i].X, basic.Y - compare[i].Y); //畢氏定理 找斜邊誤差
+                if ((errCalc < err) && (errCalc > frontDis) && (i >= frontNum)) //更小的誤差 大於設定距離 不是過去的點
                 {
                     err = errCalc;
-                    //point = compare[i];
                     placeNum = i;
                     break;
                 }
