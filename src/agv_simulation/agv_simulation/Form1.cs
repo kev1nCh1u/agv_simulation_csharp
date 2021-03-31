@@ -343,7 +343,7 @@ namespace agv_simulation
         {
             int placeNum = frontNum; //不走回頭路
 
-            for(int i = 0; i <= 314*2; i++) //basic 大小的 loop
+            for(int i = 0; i < basic.Length; i++) //basic 大小的 loop
             {
                 for(int j = 0; j < compare.Length; j++) //compare 大小的 loop
                 {
