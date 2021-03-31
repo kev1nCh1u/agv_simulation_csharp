@@ -12,6 +12,9 @@ namespace agv_simulation
 {
     public partial class Form1 : Form
     {
+        /********************************************************************************************************************************
+        * 變數定義
+        ********************************************************************************************************************************/
         public struct ErrType
         {
             public double kp, ki, kd;
@@ -25,7 +28,9 @@ namespace agv_simulation
         List<PointF> g_carHistory;
         ErrType g_errDis, g_errSita;
         
-
+        /********************************************************************************************************************************
+        * 重新啟動
+        ********************************************************************************************************************************/
         void ReStart()
         {
             int pathItem = comboBox1.SelectedIndex;
@@ -64,6 +69,9 @@ namespace agv_simulation
             g_carHistory = new List<PointF>();
         }
 
+        /********************************************************************************************************************************
+        * 產生直線路徑
+        ********************************************************************************************************************************/
         PointF[] GenLine(int width, int height)
         {
             int side = 50;
@@ -77,6 +85,9 @@ namespace agv_simulation
             return points;
         }
 
+        /********************************************************************************************************************************
+        * 產生波浪路徑
+        ********************************************************************************************************************************/
         PointF[] GenWave(int width, int height, int wave = 40)
         {
             int side = 50;
@@ -90,6 +101,9 @@ namespace agv_simulation
             return points;
         }
 
+        /********************************************************************************************************************************
+        * 產生方形路徑
+        ********************************************************************************************************************************/
         PointF[] GenSquare(int width, int height)
         {
             int side = 100, distance = 150;
@@ -129,6 +143,9 @@ namespace agv_simulation
             return points.ToArray();
         }
 
+        /********************************************************************************************************************************
+        * 產生圓形路徑
+        ********************************************************************************************************************************/
         PointF[] GenCircle(int width, int height)
         {
             PointF centerPoint = new PointF(width / 2, height / 2);
@@ -160,6 +177,9 @@ namespace agv_simulation
             return points.ToArray();
         }
 
+        /********************************************************************************************************************************
+        * 顯示在圖上
+        ********************************************************************************************************************************/
         void DrawOnPic()
         {
             //Console.WriteLine($">> {DateTime.Now.ToString()}");
@@ -240,12 +260,18 @@ namespace agv_simulation
             g.FillEllipse(brushColorBlack, g_carPoint.X - 5, g_carPoint.Y - 5, 10, 10);
         }
 
+        /********************************************************************************************************************************
+        * 畢氏定理
+        ********************************************************************************************************************************/
         double Pythagorean(float x, float y)
         {
             double ans = Math.Pow(Math.Pow(x, 2) + Math.Pow(y, 2), 0.5);
             return ans;
         }
 
+        /********************************************************************************************************************************
+        * 找到最近點
+        ********************************************************************************************************************************/
         int FindClosestPoint(PointF basic, PointF[] compare)
         {
             double errCalc;
@@ -268,6 +294,9 @@ namespace agv_simulation
             return placeNum;
         }
 
+        /********************************************************************************************************************************
+        * 從最近點 找前視點
+        ********************************************************************************************************************************/
         int FindFrontPoint(PointF basic, PointF[] compare, int closeNum, int frontDis, int frontNum = 0)
         {
             double errCalc;
@@ -289,6 +318,9 @@ namespace agv_simulation
             return placeNum;
         }
 
+        /********************************************************************************************************************************
+        * 產生半徑
+        ********************************************************************************************************************************/
         PointF[] GenCarCircle(PointF basic, PointF[] compare, int frontDis)
         {
             PointF point = new PointF(0, 0);
@@ -304,6 +336,9 @@ namespace agv_simulation
             return circlePoints;
         }
 
+        /********************************************************************************************************************************
+        * 半徑內 找前視點 
+        ********************************************************************************************************************************/
         int FindRadiusPoint(PointF[] basic, PointF[] compare, int frontNum = 0)
         {
             int placeNum = frontNum;
@@ -330,6 +365,9 @@ namespace agv_simulation
             return placeNum;
         }
 
+        /********************************************************************************************************************************
+        * 前視距離
+        ********************************************************************************************************************************/
         void PurePursuit()
         {
             double errX = 0, errY = 0;
@@ -347,12 +385,18 @@ namespace agv_simulation
 
         }
 
+        /********************************************************************************************************************************
+        * PID
+        ********************************************************************************************************************************/
         double PidFuc(double kp, double ki, double kd, double err, double errSum, double errLast)
         {
             double ans = kp * err + ki * errSum + kd * (err - errLast);
             return ans;
         }
 
+        /********************************************************************************************************************************
+        * 逆向運動學
+        ********************************************************************************************************************************/
         Tuple<double, double> Kinematics(int basicSpeed)
         {
             double carV = 0, carW = 0;
@@ -368,6 +412,9 @@ namespace agv_simulation
             return Tuple.Create(carV, carW);
         }
 
+        /********************************************************************************************************************************
+        * 單點運動學
+        ********************************************************************************************************************************/
         void MovePointCar(double carV, double carW)
         {
             g_carHistory.Add(g_carPoint);
@@ -380,6 +427,9 @@ namespace agv_simulation
             g_carHead -= carW;
         }
 
+        /********************************************************************************************************************************
+        * 差車正向運動學
+        ********************************************************************************************************************************/
         void MoveForkliftFront(double carV, double carW)
         {
             g_carHistory.Add(g_carPoint);
@@ -393,6 +443,9 @@ namespace agv_simulation
             g_wheelHead = g_carHead + Math.Atan(carW * -1 * g_carLength / carV);
         }
 
+        /********************************************************************************************************************************
+        * 差車反向運動學(叉子導航)
+        ********************************************************************************************************************************/
         void MoveForkliftReverse(double carV, double carW)
         {
             g_carHistory.Add(g_carPoint);
@@ -406,6 +459,9 @@ namespace agv_simulation
             g_wheelHead = g_carHead - Math.Atan(carW * -1 * g_carLength / carV);
         }
 
+        /********************************************************************************************************************************
+        * 抓面板設定
+        ********************************************************************************************************************************/
         void GetControlInfo()
         {
             g_frontDis = trackBar1.Value;
@@ -431,58 +487,71 @@ namespace agv_simulation
             label23.Text = Convert.ToString(g_carLength);
         }
 
+        /********************************************************************************************************************************
+        * main
+        ********************************************************************************************************************************/
         private void timer1_Tick(object sender, EventArgs e)
         {
-            GetControlInfo();
-
             // Console.WriteLine("timer1 tick");
+
+            GetControlInfo(); //抓面板設定
+
             if(comboBox3.SelectedIndex == 0)
             {
-                g_closeNum = FindClosestPoint(g_carPoint, g_waypoints);
-                g_frontNum = FindFrontPoint(g_waypoints[g_closeNum], g_waypoints, g_closeNum, g_frontDis, g_frontNum);
+                g_closeNum = FindClosestPoint(g_carPoint, g_waypoints); //找到路徑上離車的最近點
+                g_frontNum = FindFrontPoint(g_waypoints[g_closeNum], g_waypoints, g_closeNum, g_frontDis, g_frontNum); //算出前視點
             }
             else if(comboBox3.SelectedIndex == 1)
             {
-                g_closeNum = FindClosestPoint(g_carPoint, g_waypoints);
-                g_circlePoints = GenCarCircle(g_carPoint, g_waypoints, g_frontDis);
-                g_frontNum = FindRadiusPoint(g_circlePoints, g_waypoints, g_frontNum);
+                g_closeNum = FindClosestPoint(g_carPoint, g_waypoints); //找到路徑上離車的最近點
+                g_circlePoints = GenCarCircle(g_carPoint, g_waypoints, g_frontDis); //產生車子圓圈
+                g_frontNum = FindRadiusPoint(g_circlePoints, g_waypoints, g_frontNum); //算出前視點
             }
 
-            PurePursuit();
-            var carVW = Kinematics(g_basicSpeed);
+            PurePursuit(); //算出前視點與車子的誤差
+            var carVW = Kinematics(g_basicSpeed); //算出對應的V W
             if(comboBox2.SelectedIndex == 0)
-                MovePointCar(carVW.Item1, carVW.Item2);
+                MovePointCar(carVW.Item1, carVW.Item2); //單一點運動學 算出新的位置
             else if(comboBox2.SelectedIndex == 1)
-                MoveForkliftFront(carVW.Item1, carVW.Item2);
+                MoveForkliftFront(carVW.Item1, carVW.Item2); //差車前進運動學 算出新的位置
             else if(comboBox2.SelectedIndex == 2)
-                MoveForkliftReverse(carVW.Item1, carVW.Item2);
+                MoveForkliftReverse(carVW.Item1, carVW.Item2); //差車後退運動學 算出新的位置
 
-            g_closeNum = FindClosestPoint(g_carPoint, g_waypoints);
+            g_closeNum = FindClosestPoint(g_carPoint, g_waypoints); //算出新的最近點
 
-            DrawOnPic();
+            DrawOnPic(); //輸出
 
-            if (g_errDis.err < g_accuracy && g_errSita.err < g_accuracy)
+            if (g_errDis.err < g_accuracy && g_errSita.err < g_accuracy) //容許範圍內到達目標點
             {
                 ReStart();
             }
         }
 
+        /********************************************************************************************************************************
+        * 視窗開啟
+        ********************************************************************************************************************************/
         public Form1()
         {
-            InitializeComponent();
+            InitializeComponent();   
 
-            comboBox1.SelectedIndex = 0;
-            comboBox2.SelectedIndex = 0;
-            comboBox3.SelectedIndex = 0;
+            comboBox1.SelectedIndex = 0; //預設下拉選單
+            comboBox2.SelectedIndex = 0; //預設下拉選單
+            comboBox3.SelectedIndex = 0; //預設下拉選單
 
             ReStart();
         }
 
+        /********************************************************************************************************************************
+        * restart 按鈕
+        ********************************************************************************************************************************/
         private void button1_Click(object sender, EventArgs e)
         {
             ReStart();
         }
 
+        /********************************************************************************************************************************
+        * 路線選單
+        ********************************************************************************************************************************/
         private void PathChange(object sender, EventArgs e)
         {
             ReStart();
