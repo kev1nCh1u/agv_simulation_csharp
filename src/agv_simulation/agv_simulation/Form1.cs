@@ -323,14 +323,14 @@ namespace agv_simulation
         ********************************************************************************************************************************/
         PointF[] GenCarCircle(PointF basic, PointF[] compare, int frontDis)
         {
-            PointF point = new PointF(0, 0);
-            PointF[] circlePoints = new PointF[314*2 + 1];
+            PointF point = new PointF(0, 0); //點
+            PointF[] circlePoints = new PointF[314*2 + 1]; //線
 
             for (int i = -314, j = 0; i <= 314; i++, j++)
             {
-                point.X = (int)(basic.X + frontDis * (float)Math.Cos((float)i/100));
-                point.Y = (int)(basic.Y + frontDis * (float)Math.Sin((float)i/100));
-                circlePoints[j] = point;
+                point.X = (int)(basic.X + frontDis * (float)Math.Cos((float)i/100)); //X點
+                point.Y = (int)(basic.Y + frontDis * (float)Math.Sin((float)i/100)); //Y點
+                circlePoints[j] = point; //存到線
             }
 
             return circlePoints;
@@ -341,17 +341,17 @@ namespace agv_simulation
         ********************************************************************************************************************************/
         int FindRadiusPoint(PointF[] basic, PointF[] compare, int frontNum = 0)
         {
-            int placeNum = frontNum;
+            int placeNum = frontNum; //不走回頭路
 
-            for(int i = 0; i <= 314*2; i++)
+            for(int i = 0; i <= 314*2; i++) //basic 大小的 loop
             {
-                for(int j = 0; j < compare.Length; j++)
+                for(int j = 0; j < compare.Length; j++) //compare 大小的 loop
                 {
-                    int precision = 2;
+                    int precision = 2; //精準度 容許誤差
                     // Console.WriteLine(basic[i].X + " " + basic[i].Y + " " + compare[j].X + " " + compare[j].Y);
-                    if((Math.Abs(basic[i].X - compare[j].X) < precision) && (Math.Abs(basic[i].Y - compare[j].Y) < precision) && (j > frontNum))
+                    if((Math.Abs(basic[i].X - compare[j].X) < precision) && (Math.Abs(basic[i].Y - compare[j].Y) < precision) && (j > frontNum)) //圓圈與路徑相交點
                     {
-                        if(j > placeNum)
+                        if(j > placeNum) //最大index點 距離終點最近
                         {
                             placeNum = j;
                             // Console.WriteLine(placeNum + " " + j);
@@ -372,11 +372,13 @@ namespace agv_simulation
         {
             double errX = 0, errY = 0;
             
-            errX = g_waypoints[g_frontNum].X - g_carPoint.X;
-            errY = -(g_waypoints[g_frontNum].Y - g_carPoint.Y);
+            errX = g_waypoints[g_frontNum].X - g_carPoint.X; //X 誤差
+            errY = -(g_waypoints[g_frontNum].Y - g_carPoint.Y); //Y 誤差
 
-            g_errDis.err = Pythagorean((float)errX, (float)errY);
-            g_errSita.err = g_carHead - Math.Atan2(errY, errX);
+            g_errDis.err = Pythagorean((float)errX, (float)errY); //斜邊誤差
+            g_errSita.err = g_carHead - Math.Atan2(errY, errX); //角度誤差
+            
+            //屌度誤差限制
             if (g_errSita.err > Math.PI)
                 g_errSita.err = g_errSita.err - 2 * Math.PI;
             else if (g_errSita.err < -Math.PI)
@@ -401,12 +403,12 @@ namespace agv_simulation
         {
             double carV = 0, carW = 0;
 
-            carV = PidFuc(g_errDis.kp, g_errDis.ki, g_errDis.kd, g_errDis.err, g_errDis.errsum, g_errDis.errlast) + basicSpeed;
-            carW = PidFuc(g_errSita.kp, g_errSita.ki, g_errSita.kd, g_errSita.err, g_errSita.errsum, g_errSita.errlast);
-            g_errDis.errlast = g_errDis.err;
-            g_errDis.errsum += g_errDis.err;
-            g_errSita.errlast = g_errSita.err;
-            g_errSita.errsum += g_errSita.err;
+            carV = PidFuc(g_errDis.kp, g_errDis.ki, g_errDis.kd, g_errDis.err, g_errDis.errsum, g_errDis.errlast) + basicSpeed; //pid 求V
+            carW = PidFuc(g_errSita.kp, g_errSita.ki, g_errSita.kd, g_errSita.err, g_errSita.errsum, g_errSita.errlast); //pid 求W
+            g_errDis.errlast = g_errDis.err; //紀錄v誤差
+            g_errDis.errsum += g_errDis.err; //紀錄v累計誤差
+            g_errSita.errlast = g_errSita.err; //紀錄w誤差
+            g_errSita.errsum += g_errSita.err; //紀錄w累計誤差
             // Console.WriteLine("carhead:" + carHead + "  atan:" + Math.Atan2(errY, errX) + "  errSita:" + errSita.err + "  carV:" + carV + "  carW:" + carW); //debug
         
             return Tuple.Create(carV, carW);
@@ -417,14 +419,14 @@ namespace agv_simulation
         ********************************************************************************************************************************/
         void MovePointCar(double carV, double carW)
         {
-            g_carHistory.Add(g_carPoint);
+            g_carHistory.Add(g_carPoint);  //速度限制
 
-            if (carV > 30)
+            if (carV > 30)  //速度限制
                 carV = 30;
 
-            g_carPoint.X += (float)(carV * Math.Cos(g_carHead));
-            g_carPoint.Y -= (float)(carV * Math.Sin(g_carHead));
-            g_carHead -= carW;
+            g_carPoint.X += (float)(carV * Math.Cos(g_carHead)); //正向運動學 求車中心X
+            g_carPoint.Y -= (float)(carV * Math.Sin(g_carHead)); //正向運動學 求車中心Y
+            g_carHead -= carW; //正向運動學 求車中心角度
         }
 
         /********************************************************************************************************************************
@@ -432,15 +434,15 @@ namespace agv_simulation
         ********************************************************************************************************************************/
         void MoveForkliftFront(double carV, double carW)
         {
-            g_carHistory.Add(g_carPoint);
+            g_carHistory.Add(g_carPoint); //記錄歷史軌跡
 
-            if (carV > 30)
+            if (carV > 30)  //速度限制
                 carV = 30;
 
-            g_carPoint.X += (float)(carV * Math.Cos(g_carHead));
-            g_carPoint.Y -= (float)(carV * Math.Sin(g_carHead));
-            g_carHead -= carW;
-            g_wheelHead = g_carHead + Math.Atan(carW * -1 * g_carLength / carV);
+            g_carPoint.X += (float)(carV * Math.Cos(g_carHead)); //正向運動學 求車中心X
+            g_carPoint.Y -= (float)(carV * Math.Sin(g_carHead)); //正向運動學 求車中心Y
+            g_carHead -= carW; //正向運動學 求車中心角度
+            g_wheelHead = g_carHead + Math.Atan(carW * -1 * g_carLength / carV); //正向運動學 求轉向輪角度
         }
 
         /********************************************************************************************************************************
@@ -448,15 +450,15 @@ namespace agv_simulation
         ********************************************************************************************************************************/
         void MoveForkliftReverse(double carV, double carW)
         {
-            g_carHistory.Add(g_carPoint);
+            g_carHistory.Add(g_carPoint); //記錄歷史軌跡
 
-            if (carV > 30)
+            if (carV > 30) //速度限制
                 carV = 30;
 
-            g_carPoint.X += (float)(carV * Math.Cos(g_carHead));
-            g_carPoint.Y -= (float)(carV * Math.Sin(g_carHead));
-            g_carHead -= carW;
-            g_wheelHead = g_carHead - Math.Atan(carW * -1 * g_carLength / carV);
+            g_carPoint.X += (float)(carV * Math.Cos(g_carHead)); //正向運動學 求車中心X
+            g_carPoint.Y -= (float)(carV * Math.Sin(g_carHead)); //正向運動學 求車中心Y
+            g_carHead -= carW; //正向運動學 求車中心角度
+            g_wheelHead = g_carHead - Math.Atan(carW * -1 * g_carLength / carV); //正向運動學 求轉向輪角度
         }
 
         /********************************************************************************************************************************
