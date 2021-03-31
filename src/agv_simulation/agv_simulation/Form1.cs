@@ -299,9 +299,9 @@ namespace agv_simulation
         ********************************************************************************************************************************/
         int FindFrontPoint(PointF basic, PointF[] compare, int closeNum, int frontDis, int frontNum = 0)
         {
-            double errCalc;
-            double err = 999999;
-            PointF point = compare[compare.Length - 1];
+            double errCalc; //誤差計算暫存
+            double err = 999999; //假設誤差極大
+            //PointF point = compare[compare.Length - 1];
             int placeNum = compare.Length - 1;
             // Console.WriteLine("i:" + i); //debug
             for (int i = closeNum; i < compare.Length; i++)
@@ -310,7 +310,7 @@ namespace agv_simulation
                 if ((errCalc < err) && (errCalc > frontDis) && (i >= frontNum))
                 {
                     err = errCalc;
-                    point = compare[i];
+                    //point = compare[i];
                     placeNum = i;
                     break;
                 }
