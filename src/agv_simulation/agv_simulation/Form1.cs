@@ -300,16 +300,14 @@ namespace agv_simulation
         int FindFrontPoint(PointF basic, PointF[] compare, int closeNum, int frontDis, int frontNum = 0)
         {
             double errCalc; //誤差計算暫存
-            double err = 999999; //假設誤差極大
-            int placeNum = compare.Length - 1; //path index
+            int placeNum = frontNum; //前視點 path index
             // Console.WriteLine("i:" + i); //debug
             for (int i = closeNum; i < compare.Length; i++)
             {
                 errCalc = Pythagorean(basic.X - compare[i].X, basic.Y - compare[i].Y); //畢氏定理 找斜邊誤差
-                if ((errCalc < err) && (errCalc > frontDis) && (i >= frontNum)) //更小的誤差 大於設定距離 不是過去的點
+                if ((i > placeNum) && (errCalc > frontDis)) //大於過去的點 大於設定距離
                 {
-                    err = errCalc;
-                    placeNum = i;
+                    placeNum = i; //更新前視點
                     break;
                 }
             }
