@@ -274,20 +274,18 @@ namespace agv_simulation
         ********************************************************************************************************************************/
         int FindClosestPoint(PointF basic, PointF[] compare)
         {
-            double errCalc;
-            double err = 999999;
-            PointF point = new PointF(0, 0);
-            int placeNum = 0;
+            double errCalc; //誤差計算暫存
+            double err = 999999; //假設距離超級遠
+            int placeNum = 0; //最近點
             for (int i = 0; i < compare.Length; i++)
             {
                 // errCalc = Math.Pow(Math.Pow(basic.X - compare[i].X, 2) + Math.Pow(basic.Y - compare[i].Y, 2), 0.5);
-                errCalc = Pythagorean(basic.X - compare[i].X, basic.Y - compare[i].Y);
+                errCalc = Pythagorean(basic.X - compare[i].X, basic.Y - compare[i].Y); //畢氏定理 找斜邊誤差
                 // Console.WriteLine("test " + i); //debug
-                if (errCalc < err)
+                if (errCalc < err) //找到最近距離
                 {
-                    err = errCalc;
-                    point = compare[i];
-                    placeNum = i;
+                    err = errCalc; //更新最近距離
+                    placeNum = i; //更新最近點
                 }
             }
             // Console.WriteLine(i); //debug
