@@ -386,7 +386,10 @@ namespace agv_simulation
         ********************************************************************************************************************************/
         double PidFuc(double kp, double ki, double kd, double err, double errSum, double errLast)
         {
-            double ans = kp * err + ki * errSum + kd * (err - errLast);
+            double ans = 0;
+            /************* 編輯區 *******************
+            *
+            ************************/
             return ans;
         }
 
