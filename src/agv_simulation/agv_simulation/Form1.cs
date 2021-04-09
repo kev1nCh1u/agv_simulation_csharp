@@ -400,12 +400,9 @@ namespace agv_simulation
         {
             double carV = 0, carW = 0;
 
-            carV = PidFuc(g_errDis.kp, g_errDis.ki, g_errDis.kd, g_errDis.err, g_errDis.errsum, g_errDis.errlast) + basicSpeed; //pid 求V
-            carW = PidFuc(g_errSita.kp, g_errSita.ki, g_errSita.kd, g_errSita.err, g_errSita.errsum, g_errSita.errlast); //pid 求W
-            g_errDis.errlast = g_errDis.err; //紀錄v誤差
-            g_errDis.errsum += g_errDis.err; //紀錄v累計誤差
-            g_errSita.errlast = g_errSita.err; //紀錄w誤差
-            g_errSita.errsum += g_errSita.err; //紀錄w累計誤差
+            /************* 編輯區 *******************
+            *
+            ************************/
             // Console.WriteLine("carhead:" + carHead + "  atan:" + Math.Atan2(errY, errX) + "  errSita:" + errSita.err + "  carV:" + carV + "  carW:" + carW); //debug
         
             return Tuple.Create(carV, carW);
