@@ -303,7 +303,7 @@ namespace agv_simulation
             for (int i = closeNum; i < compare.Length; i++)
             {
                 errCalc = Pythagorean(basic.X - compare[i].X, basic.Y - compare[i].Y); //畢氏定理 找斜邊誤差
-                if ((i > placeNum) && (errCalc > frontDis)) //大於過去的點 大於設定距離
+                if ((i >= placeNum) && (errCalc > frontDis)) //大於過去的點 大於設定距離
                 {
                     placeNum = i; //更新前視點
                     break;
@@ -372,7 +372,7 @@ namespace agv_simulation
             g_errDis.err = Pythagorean((float)errX, (float)errY); //斜邊誤差
             g_errSita.err = g_carHead - Math.Atan2(errY, errX); //角度誤差
             
-            //屌度誤差限制
+            //角度度誤差限制
             if (g_errSita.err > Math.PI)
                 g_errSita.err = g_errSita.err - 2 * Math.PI;
             else if (g_errSita.err < -Math.PI)
