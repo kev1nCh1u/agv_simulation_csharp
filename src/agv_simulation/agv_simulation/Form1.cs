@@ -413,7 +413,7 @@ namespace agv_simulation
         ********************************************************************************************************************************/
         void MovePointCar(double carV, double carW)
         {
-            g_carHistory.Add(g_carPoint);  //速度限制
+            g_carHistory.Add(g_carPoint);  //記錄歷史軌跡
 
             if (carV > 30)  //速度限制
                 carV = 30;
